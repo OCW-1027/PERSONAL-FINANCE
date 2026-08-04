@@ -431,15 +431,25 @@ function rFSBody() {
 }
 function fsPL() {
   const b = calcPL('BIZ'), r = calcPL('RE');
-  const sec = (t, o) => `<div class="card"><h3>${t}</h3><table class="tb">
+  const sec = (t, o, empty) => `<div class="card"><h3>${t}</h3><table class="tb">
     <tr class="hd"><td>${T('revSec')}</td><td class="r"></td></tr>
-    ${o.rev.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')}
+    ${o.rev.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
+      || `<tr><td class="mut">${T('none')}</td><td></td></tr>`}
     <tr class="sub2"><td>${T('revTotal')}</td><td class="r">${yen(o.revTotal)}</td></tr>
     <tr class="hd"><td>${T('expSec')}</td><td class="r"></td></tr>
-    ${o.exp.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')}
+    ${o.exp.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
+      || `<tr><td class="mut">${T('none')}</td><td></td></tr>`}
     <tr class="sub2"><td>${T('expTotal')}</td><td class="r">${yen(o.expTotal)}</td></tr>
-    <tr class="tot"><td>${T('netIncome')}</td><td class="r">${yen(o.income)}</td></tr></table></div>`;
-  return `<div class="grid2">${sec(T('bizIncome'), b)}${r.revTotal || r.expTotal ? sec(T('reIncome'), r) : ''}</div>`;
+    <tr class="tot"><td>${T('netIncome')}</td><td class="r">${yen(o.income)}</td></tr></table>
+    ${empty || ''}</div>`;
+  const total = b.income + r.income;
+  return `<div class="grid2">${sec(T('bizIncome'), b)}${sec(T('reIncome'), r,
+      `<p class="mut">${T('reHint')}</p>`)}</div>
+    <div class="card"><table class="tb">
+      <tr><td>${T('bizIncome')}</td><td class="r">${yen(b.income)}</td></tr>
+      <tr><td>${T('reIncome')}</td><td class="r">${yen(r.income)}</td></tr>
+      <tr class="tot"><td>${T('totalIncome')} (${T('aggregate')})</td><td class="r">${yen(total)}</td></tr>
+    </table><p class="mut">${T('aggregateNote')}</p></div>`;
 }
 function fsBS() {
   const b = calcBS();
@@ -518,7 +528,21 @@ function setAmort() {
 // ---------- 不動産 ----------
 function rRE() {
   const p = calcPL('RE');
+  const reAcc = A.filter(a => a.inc === 'RE');
+  const opt = k => reAcc.filter(a => a.k === k).map(a => `<option value="${a.c}">${a.c} ${esc(acctDisp(a.c))}</option>`).join('');
   $('#v').innerHTML = `<h2>${T('reTitle')}</h2>
+  <div class="card"><h3>${T('slipNew')}</h3>
+    <div class="form">
+      <label>${T('date')}<input type="date" id="r_dt" value="${new Date().toISOString().slice(0, 10)}"></label>
+      <label>${T('reKind')}<select id="r_kind" onchange="reKindChg()">
+        <option value="R">${T('revenue')}</option><option value="E">${T('expense')}</option></select></label>
+      <label>${T('slipDr')}<select id="r_acc">${opt('E')}</select></label>
+      <label>${T('amtIncl')}<input type="number" id="r_amt" placeholder="0"></label>
+      <label>${T('desc')}<input id="r_desc"></label>
+      <label>${T('vendor')} <span class="req">${T('required')}</span><input id="r_ven" placeholder="${T('vendorPh')}"></label>
+    </div>
+    <div class="row btns"><button class="btn" onclick="addRE()">${T('add')}</button></div>
+  </div>
   <div class="card"><table class="tb">
     <tr class="hd"><td>${T('revSec')}</td><td class="r"></td></tr>
     ${p.rev.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('') || `<tr><td class="mut">${T('none')}</td><td></td></tr>`}
@@ -815,4 +839,25 @@ function doDownload() {
     saveD(); saveS(); loadD();
     toast(T('downloaded'), 'ok'); go('dash');
   }).catch(() => toast(T('syncErr'), 'bad'));
+}
+
+// ---------- 不動産 入力 ----------
+function reKindChg() {
+  const k = $('#r_kind').value;
+  const reAcc = A.filter(a => a.inc === 'RE' && a.k === k);
+  $('#r_acc').innerHTML = reAcc.map(a => `<option value="${a.c}">${a.c} ${esc(acctDisp(a.c))}</option>`).join('');
+}
+function addRE() {
+  const dt = $('#r_dt').value, acc = +$('#r_acc').value, amt = +$('#r_amt').value;
+  const desc = $('#r_desc').value.trim(), ven = $('#r_ven').value.trim();
+  const isRev = $('#r_kind').value === 'R';
+  if (!dt || !amt) return toast(T('errDate'), 'bad');
+  if (!ven) return toast(T('errVendor'), 'bad');
+  D.journals.push({
+    id: nid(), dt: dt,
+    dr: isRev ? 111 : acc, cr: isRev ? acc : 250,
+    amt: amt, desc: desc, vendor: ven,
+    tax: isRev ? '非課税' : '不課税', inc: 'RE'
+  });
+  saveD(); toast(T('registered'), 'ok'); rRE();
 }
