@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<title>個人事業 財務管理システム</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<nav class="nav">
+  <div class="logo">個人事業<br><small>財務管理</small></div>
+  <a href="#dash" data-p="dash" onclick="go('dash')" title="ダッシュボード">📊 <span>ダッシュボード</span></a>
+  <a href="#slip" data-p="slip" onclick="go('slip')" title="伝票処理">📝 <span>伝票処理</span></a>
+  <a href="#jrn"  data-p="jrn"  onclick="go('jrn')"  title="伝票照会">📋 <span>伝票照会</span></a>
+  <a href="#gl"   data-p="gl"   onclick="go('gl')"   title="総勘定元帳">📒 <span>総勘定元帳</span></a>
+  <a href="#fs"   data-p="fs"   onclick="go('fs')"   title="決算書">📑 <span>決算書</span></a>
+  <a href="#re"   data-p="re"   onclick="go('re')"   title="不動産">🏠 <span>不動産</span></a>
+  <a href="#tax"  data-p="tax"  onclick="go('tax')"  title="税額シミュ">🧮 <span>税額シミュ</span></a>
+  <a href="#set"  data-p="set"  onclick="go('set')"  title="設定">⚙️ <span>設定</span></a>
+</nav>
+<main id="v" class="main"></main>
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
