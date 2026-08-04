@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>個人事業 財務管理システム</title>
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1f3a5f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,13 +22,18 @@
   <a href="#fs"   data-p="fs"   onclick="go('fs')"   title="決算書">📑 <span>決算書</span></a>
   <a href="#re"   data-p="re"   onclick="go('re')"   title="不動産">🏠 <span>不動産</span></a>
   <a href="#tax"  data-p="tax"  onclick="go('tax')"  title="税額シミュ">🧮 <span>税額シミュ</span></a>
+  <a href="#sync" data-p="sync" onclick="go('sync')" title="同期">☁️ <span>同期</span></a>
   <a href="#set"  data-p="set"  onclick="go('set')"  title="設定">⚙️ <span>設定</span></a>
   <button id="installBtn" class="install" style="display:none" onclick="installApp()">⬇ <span>Install</span></button>
 </nav>
 <main id="v" class="main"></main>
-<script src="lang.js?v=4"></script>
-<script src="safe.js?v=4"></script>
-<script src="data.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="lang.js?v=5"></script>
+<script src="safe.js?v=5"></script>
+<script src="firebase.js?v=5"></script>
+<script src="data.js?v=5"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

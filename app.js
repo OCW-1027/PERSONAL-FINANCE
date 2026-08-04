@@ -28,6 +28,10 @@ function saveD() {
     D._snapCnt = (D._snapCnt || 0) + 1;
     if (D._snapCnt % 5 === 0) SAFE.snapshot(D, SET, 'auto');   // 5回に1回
   }
+  if (SET.autoSync && typeof FB !== 'undefined' && FB.ready && FB.user && !FB.syncing) {
+    clearTimeout(window._syncT);
+    window._syncT = setTimeout(() => FB.upload(D, SET).catch(() => {}), 4000);  // 4秒デバウンス
+  }
 }
 function saveS() { localStorage.setItem(PFX + 'set', JSON.stringify(SET)); }
 function nid() { return ++D.seq; }
@@ -219,7 +223,7 @@ function calcTax() {
 function go(p) {
   document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('on', a.dataset.p === p));
   location.hash = p;
-  const f = { dash: rDash, slip: rSlip, jrn: rJrn, gl: rGL, fs: rFS, re: rRE, tax: rTax, set: rSet }[p];
+  const f = { dash: rDash, slip: rSlip, jrn: rJrn, gl: rGL, fs: rFS, re: rRE, tax: rTax, sync: rSync, set: rSet }[p];
   if (f) f();
 }
 
@@ -655,6 +659,7 @@ if ('serviceWorker' in navigator) {
 
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof initLang === 'function') initLang();
+  if (typeof FB !== 'undefined') FB.init();
   applyNavLabels();
   const hasLocal = !!localStorage.getItem(PFX + 'data');
   // キャッシュ消去などで localStorage が空 → スナップショットから復旧提案
@@ -693,7 +698,7 @@ function wizDone() {
 
 // ---------- ナビ ラベル ----------
 function applyNavLabels() {
-  const map = { dash:'dash', slip:'slip', jrn:'jrn', gl:'gl', fs:'fs', re:'re', tax:'tax', set:'set' };
+  const map = { dash:'dash', slip:'slip', jrn:'jrn', gl:'gl', fs:'fs', re:'re', tax:'tax', sync:'sync', set:'set' };
   document.querySelectorAll('.nav a').forEach(a => {
     const k = map[a.dataset.p]; if (!k) return;
     const sp = a.querySelector('span'); if (sp) sp.textContent = T(k);
@@ -727,4 +732,70 @@ function restoreSnap(ts) {
     if (o.D) D = o.D; if (o.SET) SET = o.SET;
     saveD(); saveS(); loadD(); toast(T('restored'), 'ok'); go('dash');
   }).catch(() => toast(T('badFile'), 'bad'));
+}
+
+// ---------- クラウド同期 ----------
+function rSync() {
+  const on = (typeof FB !== 'undefined' && FB.ready);
+  const u = on ? FB.user : null;
+  let h = `<h2>${T('syncTitle')}</h2>`;
+  if (!on) { $('#v').innerHTML = h + `<div class="alert warn">Firebase SDK ${T('syncErr')}</div>`; return; }
+  h += `<div class="card"><div id="fbst"></div>
+    <p class="mut">${T('loginNote')}</p></div>`;
+  if (u) {
+    h += `<div class="card"><h3>${T('sync')}</h3>
+      <div id="cloudinfo" class="mut">…</div>
+      <div class="row btns" style="margin-top:10px">
+        <button class="btn" onclick="doUpload()">${T('upload')}</button>
+        <button class="btn gray" onclick="doDownload()">${T('download')}</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="c_auto" ${SET.autoSync ? 'checked' : ''}
+        onchange="SET.autoSync=this.checked;saveS();toast(T('saved'),'ok')"> ${T('autoSync')}</label>
+      <p class="mut" id="syncinfo"></p></div>`;
+  }
+  $('#v').innerHTML = h;
+  renderFBStatus();
+  if (u) { refreshCloud(); showSyncInfo(); }
+}
+function renderFBStatus() {
+  const el = document.getElementById('fbst'); if (!el) return;
+  const u = (typeof FB !== 'undefined') ? FB.user : null;
+  el.innerHTML = u
+    ? `<div class="row"><b>${esc(u.email || '')}</b>
+       <button class="btn gray sm" onclick="doLogout()">${T('logout')}</button></div>`
+    : `<button class="btn" onclick="doLogin()">${T('login')}</button>
+       <span class="mut" style="margin-left:10px">${T('notLoggedIn')}</span>`;
+}
+function doLogin() { FB.login().catch(() => toast(T('syncErr'), 'bad')); }
+function doLogout() { FB.logout().then(() => { toast(T('logout'), 'ok'); go('sync'); }); }
+function onFBLogin() { if ((location.hash || '') === '#sync') go('sync'); }
+function refreshCloud() {
+  const el = document.getElementById('cloudinfo'); if (!el) return;
+  FB.peek().then(m => {
+    el.textContent = m ? T('cloudInfo', { n: m.count, d: (m.updated || '').slice(0, 16).replace('T', ' ') })
+                       : T('cloudEmpty');
+  });
+}
+function showSyncInfo() {
+  const el = document.getElementById('syncinfo'); if (!el) return;
+  const d = FB.daysSinceSync();
+  el.textContent = d > 9000 ? T('syncNever') : T('syncLast', { n: d });
+}
+function doUpload() {
+  FB.peek().then(m => {
+    const n = m ? m.count : 0;
+    if (n && !confirm(T('confirmUpload', { n: n, m: D.journals.length }))) return;
+    FB.upload(D, SET).then(() => { toast(T('uploaded'), 'ok'); refreshCloud(); showSyncInfo(); })
+      .catch(() => toast(T('syncErr'), 'bad'));
+  });
+}
+function doDownload() {
+  FB.download().then(r => {
+    if (!r) return toast(T('cloudEmpty'), 'bad');
+    if (!confirm(T('confirmDownload', { n: r.meta.count, m: D.journals.length }))) return;
+    if (typeof SAFE !== 'undefined') SAFE.snapshot(D, SET, 'before-download');
+    if (r.obj.D) D = r.obj.D; if (r.obj.SET) SET = r.obj.SET;
+    saveD(); saveS(); loadD();
+    toast(T('downloaded'), 'ok'); go('dash');
+  }).catch(() => toast(T('syncErr'), 'bad'));
 }

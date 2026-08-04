@@ -2,7 +2,7 @@
 // PERSONAL-FINANCE : service-worker.js
 // オフライン対応 — アプリ本体をキャッシュ
 // ============================================================
-const CACHE = 'pf-v4';
+const CACHE = 'pf-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -10,6 +10,8 @@ const ASSETS = [
   './lang.js',
   './data.js',
   './app.js',
+  './safe.js',
+  './firebase.js',
   './manifest.json'
 ];
 
