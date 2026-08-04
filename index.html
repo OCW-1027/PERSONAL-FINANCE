@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <title>個人事業 財務管理システム</title>
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=4">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PF会計">
+<link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 <nav class="nav">
@@ -18,10 +23,12 @@
   <a href="#re"   data-p="re"   onclick="go('re')"   title="不動産">🏠 <span>不動産</span></a>
   <a href="#tax"  data-p="tax"  onclick="go('tax')"  title="税額シミュ">🧮 <span>税額シミュ</span></a>
   <a href="#set"  data-p="set"  onclick="go('set')"  title="設定">⚙️ <span>設定</span></a>
+  <button id="installBtn" class="install" style="display:none" onclick="installApp()">⬇ <span>Install</span></button>
 </nav>
 <main id="v" class="main"></main>
-<script src="lang.js?v=2"></script>
-<script src="data.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="lang.js?v=4"></script>
+<script src="safe.js?v=4"></script>
+<script src="data.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

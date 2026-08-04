@@ -20,7 +20,15 @@ function loadD() {
   SET = Object.assign({}, DEF_SET, SET);
   A = ACCT_INIT.concat(D.customAccts);
 }
-function saveD() { D._saved = new Date().toISOString(); localStorage.setItem(PFX + 'data', JSON.stringify(D)); }
+function saveD() {
+  D._saved = new Date().toISOString();
+  try { localStorage.setItem(PFX + 'data', JSON.stringify(D)); }
+  catch (e) { alert(T('storageFull')); }
+  if (typeof SAFE !== 'undefined') {
+    D._snapCnt = (D._snapCnt || 0) + 1;
+    if (D._snapCnt % 5 === 0) SAFE.snapshot(D, SET, 'auto');   // 5回に1回
+  }
+}
 function saveS() { localStorage.setItem(PFX + 'set', JSON.stringify(SET)); }
 function nid() { return ++D.seq; }
 
@@ -232,6 +240,11 @@ function rDash() {
       const need = t.judge - t.limit + 1;
       h += `<div class="alert bad">⚠ ${T('overNote',{n:yen(need)})}</div>`;
     }
+  }
+  if (typeof SAFE !== 'undefined' && SAFE.needBackup()) {
+    const dd = SAFE.daysSinceBackup();
+    h += `<div class="alert warn bkwarn">💾 ${dd > 9000 ? T('backupNever') : T('backupOld', { n: dd })}
+      <button class="btn sm" onclick="expBackup()">${T('backup')}</button></div>`;
   }
   h += `<div class="grid4">
     ${kpi(T('revenue'), pl.revTotal)}${kpi(T('expense'), pl.expTotal)}${kpi(T('bizIncome'), pl.income)}${kpi(T('taxIns'), t.totalTax + t.kokuho)}
@@ -569,11 +582,19 @@ function rSet() {
   <label class="chk"><input type="checkbox" id="c_track" ${SET.allowanceTrack ? 'checked' : ''}> ${T('trackChk')}</label>
   </div>
   <div class="card"><h3>${T('setData')}</h3>
-    <button class="btn" onclick="saveSet()">${T('saveSet')}</button>
-    <button class="btn gray" onclick="expBackup()">${T('backup')}</button>
-    <label class="btn gray file">${T('restore')}<input type="file" hidden onchange="impBackup(this)"></label>
-    <button class="btn red" onclick="resetAll()">${T('resetAll')}</button>
+    <div class="row btns">
+      <button class="btn" onclick="saveSet()">${T('saveSet')}</button>
+      <button class="btn gray" onclick="expBackup()">${T('backup')}</button>
+      <label class="btn gray file">${T('restore')}<input type="file" hidden onchange="impBackup(this)"></label>
+      <button class="btn red" onclick="resetAll()">${T('resetAll')}</button>
+    </div>
+    <p class="mut" id="bkinfo"></p>
+  </div>
+  <div class="card"><h3>${T('snapTitle')}</h3>
+    <p class="mut">${T('snapNote')}</p>
+    <div id="snaps" class="mut">…</div>
   </div>`;
+  showBackupInfo(); listSnaps();
 }
 function saveSet() {
   SET.ownerName = $('#c_name').value; SET.bizName = $('#c_biz').value;
@@ -591,6 +612,8 @@ function expBackup() {
   const b = new Blob([JSON.stringify({ D, SET }, null, 1)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b); a.download = `pf_backup_${new Date().toISOString().slice(0, 10)}.json`; a.click();
+  if (typeof SAFE !== 'undefined') { SAFE.markBackup(); SAFE.snapshot(D, SET, 'manual'); }
+  toast(T('backupDone'), 'ok');
 }
 function impBackup(el) {
   const f = el.files[0]; if (!f) return;
@@ -611,9 +634,39 @@ function resetAll() {
 }
 
 // ---------- 初期化 ----------
+// ---------- PWA ----------
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  const b = document.getElementById('installBtn');
+  if (b) b.style.display = 'inline-block';
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const b = document.getElementById('installBtn'); if (b) b.style.display = 'none';
+  });
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof initLang === 'function') initLang();
   applyNavLabels();
+  const hasLocal = !!localStorage.getItem(PFX + 'data');
+  // キャッシュ消去などで localStorage が空 → スナップショットから復旧提案
+  if (!hasLocal && typeof SAFE !== 'undefined') {
+    SAFE.checkRecovery(false).then(s => {
+      if (s && confirm(T('recoverAsk', { n: s.count }))) {
+        const o = JSON.parse(s.data);
+        if (o.D) D = o.D; if (o.SET) SET = o.SET;
+        saveD(); saveS(); loadD(); toast(T('recovered'), 'ok'); go('dash');
+      }
+    }).catch(() => {});
+  }
   loadD();
   if (!SET.ownerName && !D.journals.length) {
     // 初回セットアップ
@@ -648,4 +701,30 @@ function applyNavLabels() {
   });
   const lg = document.querySelector('.nav .logo');
   if (lg) lg.innerHTML = T('appTitle').replace(' ', '<br>') + '<br><small>' + T('appSub') + '</small>';
+}
+
+// ---------- データ保護 UI ----------
+function showBackupInfo() {
+  const el = $('#bkinfo'); if (!el || typeof SAFE === 'undefined') return;
+  const d = SAFE.daysSinceBackup();
+  const kb = Math.round(SAFE.usage() / 1024);
+  el.innerHTML = (d > 9000 ? T('backupNever') : T('backupLast', { n: d })) + ' / ' + kb + ' KB';
+}
+function listSnaps() {
+  const el = $('#snaps'); if (!el || typeof SAFE === 'undefined') return;
+  SAFE.list().then(l => {
+    if (!l.length) { el.textContent = T('snapNone'); return; }
+    el.innerHTML = '<table class="tb"><tr><th>' + T('date') + '</th><th class="r">'
+      + T('slip') + '</th><th></th></tr>' + l.map(s =>
+        `<tr><td>${s.ts.slice(0, 16).replace('T', ' ')}</td><td class="r">${s.count}</td>
+         <td><a href="#" onclick="restoreSnap('${s.ts}');return false">${T('restore')}</a></td></tr>`).join('')
+      + '</table>';
+  });
+}
+function restoreSnap(ts) {
+  if (!confirm(T('snapConfirm'))) return;
+  SAFE.restore(ts).then(o => {
+    if (o.D) D = o.D; if (o.SET) SET = o.SET;
+    saveD(); saveS(); loadD(); toast(T('restored'), 'ok'); go('dash');
+  }).catch(() => toast(T('badFile'), 'bad'));
 }
