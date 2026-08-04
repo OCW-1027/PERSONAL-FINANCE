@@ -690,7 +690,7 @@ window.addEventListener('DOMContentLoaded', () => {
   loadD();
   if (!SET.ownerName && !D.journals.length) {
     // 初回セットアップ
-    $('#v').innerHTML = `<div class="card wiz"><h2>${T('welcome')}</h2>
+    $('#v').innerHTML = `<div class="card wiz"><div class="wiz-logo"><b>PFS</b><small>Personal Finance System</small></div><h2>${T('welcome')}</h2>
       <p>${T('welcomeMsg')}</p>
       <div class="form"><label>${T('setLang')}<select onchange="setLang(this.value)">
         <option value="ko"${L==='ko'?' selected':''}>한국어</option><option value="ja"${L==='ja'?' selected':''}>日本語</option></select></label></div>
@@ -720,7 +720,9 @@ function applyNavLabels() {
     a.title = T(k);
   });
   const lg = document.querySelector('.nav .logo');
-  if (lg) lg.innerHTML = '<b>' + T('appTitle') + '</b><small>' + T('appSub') + '</small>';
+  if (lg) lg.innerHTML = '<b>' + T('appTitle') + '</b><small>' + T('appSub') + '</small>'
+    + '<em>' + T('appSub2') + '</em>';
+  document.title = T('appTitle') + ' — ' + T('appSub2');
 }
 
 // ---------- データ保護 UI ----------

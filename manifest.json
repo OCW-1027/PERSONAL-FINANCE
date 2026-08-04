@@ -1,7 +1,7 @@
 {
-  "name": "個人事業 財務管理システム / 개인사업 재무관리",
-  "short_name": "PF会計",
-  "description": "個人事業主のための複式簿記・確定申告支援システム",
+  "name": "PFS — Personal Finance System",
+  "short_name": "PFS",
+  "description": "Personal Finance System — 個人事業主のための複式簿記・確定申告支援 / 개인사업 재무관리",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -10,12 +10,31 @@
   "theme_color": "#1f3a5f",
   "lang": "ja",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "伝票入力", "url": "./index.html#slip" },
-    { "name": "決算書", "url": "./index.html#fs" },
-    { "name": "税額シミュ", "url": "./index.html#tax" }
+    {
+      "name": "伝票入力",
+      "url": "./index.html#slip"
+    },
+    {
+      "name": "決算書",
+      "url": "./index.html#fs"
+    },
+    {
+      "name": "税額シミュ",
+      "url": "./index.html#tax"
+    }
   ]
 }
