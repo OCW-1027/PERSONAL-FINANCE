@@ -6,7 +6,7 @@
 const LANG = {
   ko: {
     // --- 공통 ---
-    appTitle: "개인사업 재무관리", appSub: "재무관리",
+    appTitle: "개인사업", appSub: "재무관리 시스템",
     dash: "대시보드", slip: "전표입력", jrn: "전표조회", gl: "총계정원장",
     fs: "결산서", re: "부동산", tax: "세액시뮬", sync: "동기화", set: "설정",
     save: "저장", del: "삭제", add: "등록", cancel: "취소", apply: "적용",
@@ -112,7 +112,7 @@ const LANG = {
   },
 
   ja: {
-    appTitle: "個人事業 財務管理", appSub: "財務管理",
+    appTitle: "個人事業", appSub: "財務管理システム",
     dash: "ダッシュボード", slip: "伝票処理", jrn: "伝票照会", gl: "総勘定元帳",
     fs: "決算書", re: "不動産", tax: "税額シミュ", sync: "同期", set: "設定",
     save: "保存", del: "削除", add: "登録", cancel: "取消", apply: "適用",

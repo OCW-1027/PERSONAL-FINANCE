@@ -705,7 +705,7 @@ function applyNavLabels() {
     a.title = T(k);
   });
   const lg = document.querySelector('.nav .logo');
-  if (lg) lg.innerHTML = T('appTitle').replace(' ', '<br>') + '<br><small>' + T('appSub') + '</small>';
+  if (lg) lg.innerHTML = '<b>' + T('appTitle') + '</b><small>' + T('appSub') + '</small>';
 }
 
 // ---------- データ保護 UI ----------
