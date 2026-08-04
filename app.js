@@ -369,10 +369,24 @@ function rJrnList() {
   const q = ($('#q') && $('#q').value || '').toLowerCase();
   const js = jOfFY().filter(j => !q || (j.desc || '').toLowerCase().includes(q) || (j.vendor || '').toLowerCase().includes(q))
     .sort((a, b) => a.dt < b.dt ? 1 : -1);
-  $('#jl').innerHTML = `<table class="tb"><tr><th>${T('date')}</th><th>${T('slipDr')}</th><th>${T('desc')}</th><th>${T('vendor')}</th><th class="r">${T('amount')}</th><th class="r">${T('bizPart')}</th><th></th></tr>` +
+  // PC: テーブル / モバイル: カード (CSSで切替)
+  const tbl = `<table class="tb only-pc"><tr><th>${T('date')}</th><th>${T('slipDr')}</th><th>${T('desc')}</th><th>${T('vendor')}</th><th class="r">${T('amount')}</th><th class="r">${T('bizPart')}</th><th></th></tr>` +
     js.map(j => `<tr><td>${j.dt}</td><td>${esc(acctDisp(j.dr))}</td><td>${esc(j.desc)}</td><td class="mut">${esc(j.vendor)}</td>
     <td class="r">${yen(j.amt)}</td><td class="r">${bizAmt(j) !== j.amt ? '<b>' + yen(bizAmt(j)) + '</b>' : ''}</td>
     <td><a href="#" onclick="delSlip(${j.id});return false" class="del">×</a></td></tr>`).join('') + '</table>';
+  const cards = `<div class="only-mb jcards">` + js.map(j => {
+    const bp = bizAmt(j);
+    return `<div class="jc">
+      <div class="jc-h"><span class="jc-d">${j.dt.slice(5)}</span>
+        <span class="jc-a">${yen(j.amt)}</span>
+        <a href="#" onclick="delSlip(${j.id});return false" class="del">×</a></div>
+      <div class="jc-t">${esc(j.desc)}</div>
+      <div class="jc-m"><span class="tag">${esc(tAcctShort(j.dr, acct(j.dr).n))}</span>
+        <span>${esc(j.vendor)}</span>
+        ${bp !== j.amt ? `<span class="tag g">${T('bizPart')} ${yen(bp)}</span>` : ''}</div>
+    </div>`;
+  }).join('') + '</div>';
+  $('#jl').innerHTML = tbl + cards;
 }
 function delSlip(id) {
   if (!confirm(T('confirmDel'))) return;
@@ -390,14 +404,15 @@ function rGL() {
 function rGLBody() {
   const c = +$('#glc').value; let bal = 0;
   const js = jOfFY().filter(j => j.dr == c || j.cr == c).sort((a, b) => a.dt > b.dt ? 1 : -1);
-  $('#glb').innerHTML = `<h3>${c} ${esc(acctDisp(c))}</h3><table class="tb">
-    <tr><th>${T('date')}</th><th>${T('desc')}</th><th>${T('vendor')}</th><th class="r">${T('debit')}</th><th class="r">${T('credit')}</th><th class="r">${T('balance')}</th></tr>` +
+  $('#glb').innerHTML = `<h3>${c} ${esc(acctDisp(c))}</h3><div class="scrollx"><table class="tb gl">
+    <tr><th>${T('date')}</th><th class="hide-mb">${T('desc')}</th><th class="hide-mb">${T('vendor')}</th><th class="r">${T('debit')}</th><th class="r">${T('credit')}</th><th class="r">${T('balance')}</th></tr>` +
     js.map(j => {
       const v = bizAmt(j), dr = j.dr == c ? v : 0, cr = j.cr == c ? v : 0;
       bal += dr - cr;
-      return `<tr><td>${j.dt}</td><td>${esc(j.desc)}</td><td class="mut">${esc(j.vendor)}</td>
+      return `<tr><td>${j.dt.slice(5)}<span class="only-mb mbdesc">${esc(j.desc)}</span></td>
+      <td class="hide-mb">${esc(j.desc)}</td><td class="mut hide-mb">${esc(j.vendor)}</td>
       <td class="r">${dr ? yen(dr) : ''}</td><td class="r">${cr ? yen(cr) : ''}</td><td class="r">${yen(bal)}</td></tr>`;
-    }).join('') + `<tr class="tot"><td colspan="5">${T('balance')}</td><td class="r">${yen(bal)}</td></tr></table>`;
+    }).join('') + `<tr class="tot"><td colspan="3" class="tot-l">${T('balance')}</td><td class="r">${yen(bal)}</td></tr></table></div>`;
 }
 
 // ---------- 決算書 ----------
@@ -457,10 +472,10 @@ function fsWhite() {
 }
 function fsExpDetail() {
   const b = calcPL('BIZ');
-  return `<div class="card"><h3>${T('expDetail')}</h3><table class="tb">
+  return `<div class="card"><h3>${T('expDetail')}</h3><div class="scrollx"><table class="tb">
     <tr><th>${T('slipDr')}</th><th class="r">${T('amount')}</th><th class="r">${T('ratioPct')}</th></tr>
     ${b.exp.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td><td class="r mut">${b.expTotal ? (x.v / b.expTotal * 100).toFixed(1) : 0}%</td></tr>`).join('')}
-    <tr class="tot"><td>${T('total')}</td><td class="r">${yen(b.expTotal)}</td><td></td></tr></table></div>`;
+    <tr class="tot"><td>${T('total')}</td><td class="r">${yen(b.expTotal)}</td><td></td></tr></table></div></div>`;
 }
 function fsRatio() {
   const rows = A.filter(a => a.h).map(a => {
