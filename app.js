@@ -51,11 +51,12 @@ function ratioOf(code) {
 function bizAmt(j) { return Math.round((j.amt || 0) * (j.ratio != null ? j.ratio : ratioOf(j.dr))); }
 
 // ---------- 開業費 ----------
+function isPreOpen(j) {
+  return SET.openDate && j.dt < SET.openDate && (j.inc || 'BIZ') === 'BIZ' && acct(j.dr).k === 'E';
+}
 function openingExpTotal() {
-  const od = SET.openDate;
-  if (!od) return 0;
-  return D.journals.filter(j => j.dt < od && acct(j.dr).k === 'E')
-    .reduce((s, j) => s + bizAmt(j), 0);
+  if (!SET.openDate) return 0;
+  return D.journals.filter(j => inFY(j.dt) && isPreOpen(j)).reduce((s, j) => s + bizAmt(j), 0);
 }
 function openingExpAmort(y) { return (SET.openingExpense.amortized || {})[y || SET.fy] || 0; }
 
@@ -64,7 +65,7 @@ function acctBal(code, incType) {
   let s = 0;
   jOfFY().forEach(j => {
     if (incType && j.inc && j.inc !== incType) return;
-    if (SET.openDate && j.dt < SET.openDate && acct(j.dr).k === 'E') return; // 開業費は除外
+    if (isPreOpen(j)) return; // 開業費は除外
     const amt = bizAmt(j);
     if (j.dr == code) s += amt;
     if (j.cr == code) s -= amt;
@@ -87,7 +88,7 @@ function calcPL(inc) {
     if (inc === 'RE' && a.inc !== 'RE') return;
     let s = 0;
     jOfFY().forEach(j => {
-      if (SET.openDate && j.dt < SET.openDate && acct(j.dr).k === 'E') return;
+      if (isPreOpen(j)) return;
       const ji = j.inc || 'BIZ';
       if (inc && ji !== inc) return;
       const amt = bizAmt(j);
@@ -117,7 +118,7 @@ function calcBS() {
     if (a.c === 135 || a.c === 150 || a.c === 250 || a.c === 310) return; // 後で個別計上
     let s = 0;
     jOfFY().forEach(j => {
-      if (SET.openDate && j.dt < SET.openDate) return;   // 開業前は開業費に集約
+      if (isPreOpen(j)) return;   // 開業前(事業)は開業費に集約
       const amt = bizAmt(j);
       if (j.dr == a.c) s += amt;
       if (j.cr == a.c) s -= amt;
@@ -132,7 +133,7 @@ function calcBS() {
   if (openBal) asset.push({ c: 135, n: '開業費', v: openBal, g: '繰延資産' });
   // 事業主貸 = 家事分 (開業後)
   let draw = 0;
-  jOfFY().forEach(j => { if (!(SET.openDate && j.dt < SET.openDate)) draw += (j.amt || 0) - bizAmt(j); });
+  jOfFY().forEach(j => { if (!isPreOpen(j)) draw += (j.amt || 0) - bizAmt(j); });
   if (draw) asset.push({ c: 150, n: '事業主貸', v: draw, g: '事業主' });
   const at = asset.reduce((s, x) => s + x.v, 0);
   const lt = liab.reduce((s, x) => s + x.v, 0);
@@ -269,7 +270,7 @@ function monthTable() {
     const k = j.dt.slice(0, 7), a = acct(j.dr);
     m[k] = m[k] || { r: 0, e: 0 };
     if (acct(j.cr).k === 'R') m[k].r += bizAmt(j);
-    if (a.k === 'E' && !(SET.openDate && j.dt < SET.openDate)) m[k].e += bizAmt(j);
+    if (a.k === 'E' && !isPreOpen(j)) m[k].e += bizAmt(j);
   });
   const ks = Object.keys(m).sort();
   if (!ks.length) return '<p class="mut">'+T('noData')+'</p>';
