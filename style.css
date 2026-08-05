@@ -156,3 +156,35 @@ textarea{font-family:monospace;font-size:12px}
   .row.btns .btn{flex:1 1 auto}
   .row.btns input{flex:1 1 100%!important;width:100%!important}
 }
+
+/* 予定 D-day カード */
+.alist{display:flex;flex-direction:column;gap:6px}
+.ai{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;
+  background:#f8fafc;border-left:3px solid #cbd5e1}
+.ai.warn{background:#fff8e1;border-left-color:#fb8c00}
+.ai.hi{background:#fdecea;border-left-color:#c0392b}
+.ai-ic{font-size:17px;flex:0 0 auto}
+.ai-b{flex:1;min-width:0;display:flex;flex-direction:column}
+.ai-b b{font-size:13px;color:#1f3a5f}
+.ai.hi .ai-b b{color:#c0392b}
+.ai-b small{font-size:11px;color:#94a3b8}
+.ai-d{font-weight:700;font-size:13px;color:#64748b;flex:0 0 auto;font-variant-numeric:tabular-nums}
+.ai.warn .ai-d{color:#b7791f}.ai.hi .ai-d{color:#c0392b}
+/* 月別 チャート */
+.mchart{display:flex;align-items:flex-end;gap:6px;height:130px;padding:6px 2px 0;
+  border-bottom:1px solid #e2e8f0}
+.mb{flex:1;display:flex;flex-direction:column;align-items:center;height:100%}
+.mb-bars{flex:1;display:flex;align-items:flex-end;gap:2px;width:100%;justify-content:center}
+.mb-bars i{width:44%;max-width:16px;border-radius:2px 2px 0 0;min-height:1px}
+.mb-bars i.r{background:#3b6396}.mb-bars i.e{background:#fb8c00}
+.mb span{font-size:10px;color:#94a3b8;margin-top:4px}
+.mleg{display:flex;gap:14px;font-size:11px;color:#64748b;margin-top:6px}
+.mleg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.mleg i.r{background:#3b6396}.mleg i.e{background:#fb8c00}
+/* 費用分析 マトリクス */
+.tb.mtx{font-size:11.5px;white-space:nowrap}
+.tb.mtx td,.tb.mtx th{padding:5px 7px}
+.tb.mtx td.nw{white-space:nowrap;position:sticky;left:0;background:#fff;z-index:1}
+.tb.mtx tr:hover td.nw{background:#f8fafc}
+.tb.mtx .tot td.nw,.tb.mtx .tot td{background:#eef4fb}
+.tb.mtx td.z{color:#e2e8f0}

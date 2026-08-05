@@ -282,18 +282,24 @@ function rDash() {
 function kpi(l, v) { return `<div class="card kpi"><small>${l}</small><b>${yen(v)}</b></div>`; }
 function alerts() {
   const now = new Date().toISOString().slice(0, 10);
+  const fy = SET.fy;
   const list = [
-    ['2026-12-31', '消費税課税事業者選択届 (還付を受ける場合)'],
-    ['2027-03-15', '⚠ 青色申告承認申請書 提出期限 (65万控除)'],
-    ['2027-03-15', `${SET.fy}年分 確定申告`],
-    ['2027-08-31', '障害児手当 現況届'],
-  ].filter(x => x[0] >= now);
-  if (!list.length) return '<p class="mut">'+T('noSchedule')+'</p>';
-  return '<table class="tb">' + list.map(x => {
-    const d = Math.ceil((new Date(x[0]) - new Date(now)) / 86400000);
-    return `<tr><td>${x[0]}</td><td>${x[1]}</td><td class="r ${d < 60 ? 'bad' : ''}">D-${d}</td></tr>`;
-  }).join('') + '</table>';
+    ['🧾', `${fy + 1}-03-15`, T('alFiling', { y: fy }), T('alFilingSub'), 0],
+    ['⚠️', `${fy + 1}-03-15`, T('alBlue'), T('alBlueSub'), 1],
+    ['🧮', `${fy}-12-31`, T('alConsump'), T('alConsumpSub'), 0],
+    ['👨‍👩‍👧', `${fy + 1}-08-31`, T('alAllowance'), T('alAllowanceSub'), 0],
+    ['💰', `${fy + 1}-07-31`, T('alPrepay'), T('alPrepaySub'), 0]
+  ].filter(x => x[1] >= now).sort((x, y) => x[1].localeCompare(y[1]));
+  if (!list.length) return `<p class="mut">${T('noSchedule')}</p>`;
+  return '<div class="alist">' + list.map(x => {
+    const d = Math.ceil((new Date(x[1]) - new Date(now)) / 86400000);
+    const lv = x[4] ? 'hi' : (d < 45 ? 'warn' : '');
+    return `<div class="ai ${lv}"><span class="ai-ic">${x[0]}</span>
+      <span class="ai-b"><b>${esc(x[2])}</b><small>${esc(x[3])} · ${x[1]}</small></span>
+      <span class="ai-d">D-${d}</span></div>`;
+  }).join('') + '</div>';
 }
+
 function monthTable() {
   const m = {};
   jOfFY().forEach(j => {
@@ -303,9 +309,26 @@ function monthTable() {
     if (a.k === 'E' && !isPreOpen(j)) m[k].e += bizAmt(j);
   });
   const ks = Object.keys(m).sort();
-  if (!ks.length) return '<p class="mut">'+T('noData')+'</p>';
-  return `<table class="tb"><tr><th>${T('date')}</th><th class="r">${T('revenue')}</th><th class="r">${T('expense')}</th><th class="r">${T('diff')}</th></tr>` +
-    ks.map(k => `<tr><td>${k}</td><td class="r">${yen(m[k].r)}</td><td class="r">${yen(m[k].e)}</td><td class="r">${yen(m[k].r - m[k].e)}</td></tr>`).join('') + '</table>';
+  if (!ks.length) return `<p class="mut">${T('noData')}</p>`;
+  const max = Math.max(1, ...ks.map(k => Math.max(m[k].r, m[k].e)));
+  const bars = ks.map(k => {
+    const o = m[k];
+    return `<div class="mb"><div class="mb-bars">
+      <i class="r" style="height:${o.r / max * 100}%" title="${yen(o.r)}"></i>
+      <i class="e" style="height:${o.e / max * 100}%" title="${yen(o.e)}"></i>
+    </div><span>${k.slice(5)}</span></div>`;
+  }).join('');
+  const tr = ks.map(k => `<tr><td>${k}</td><td class="r">${yen(m[k].r)}</td>
+    <td class="r">${yen(m[k].e)}</td><td class="r ${m[k].r - m[k].e < 0 ? 'bad' : ''}">${yen(m[k].r - m[k].e)}</td></tr>`).join('');
+  const tot = ks.reduce((s, k) => ({ r: s.r + m[k].r, e: s.e + m[k].e }), { r: 0, e: 0 });
+  return `<div class="mchart">${bars}</div>
+    <div class="mleg"><span><i class="r"></i>${T('revenue')}</span><span><i class="e"></i>${T('expense')}</span></div>
+    <div class="scrollx"><table class="tb" style="margin-top:10px">
+      <tr><th>${T('date')}</th><th class="r">${T('revenue')}</th><th class="r">${T('expense')}</th><th class="r">${T('diff')}</th></tr>
+      ${tr}
+      <tr class="tot"><td>${T('total')}</td><td class="r">${yen(tot.r)}</td><td class="r">${yen(tot.e)}</td>
+        <td class="r">${yen(tot.r - tot.e)}</td></tr>
+    </table></div>`;
 }
 
 // ---------- 伝票入力 ----------
@@ -432,14 +455,14 @@ function rGLBody() {
 let fsTab = 'pl';
 function rFS() {
   $('#v').innerHTML = `<h2>${T('fs')} ${fySelect()}</h2>
-  <div class="tabs">${[['pl', T('tabPL')], ['bs', T('tabBS')], ['tb', T('tabTB')], ['blue', T('tabBlue')], ['white', T('tabWhite')], ['ratio', T('tabRatio')], ['open', T('tabOpen')]]
+  <div class="tabs">${[['pl', T('tabPL')], ['bs', T('tabBS')], ['tb', T('tabTB')], ['exp', T('tabExp')], ['blue', T('tabBlue')], ['white', T('tabWhite')], ['ratio', T('tabRatio')], ['open', T('tabOpen')]]
       .map(t => `<a href="#" onclick="fsTab='${t[0]}';rFSBody();return false" class="${fsTab === t[0] ? 'on' : ''}">${t[1]}</a>`).join('')}</div>
   <div id="fsb"></div>`;
   rFSBody();
 }
 function rFSBody() {
-  document.querySelectorAll('.tabs a').forEach((a, i) => a.classList.toggle('on', ['pl', 'bs', 'tb', 'blue', 'white', 'ratio', 'open'][i] === fsTab));
-  const f = { pl: fsPL, bs: fsBS, tb: fsTB, blue: fsBlue, white: fsWhite, ratio: fsRatio, open: fsOpen }[fsTab];
+  document.querySelectorAll('.tabs a').forEach((a, i) => a.classList.toggle('on', ['pl', 'bs', 'tb', 'exp', 'blue', 'white', 'ratio', 'open'][i] === fsTab));
+  const f = { pl: fsPL, bs: fsBS, tb: fsTB, exp: fsExp, blue: fsBlue, white: fsWhite, ratio: fsRatio, open: fsOpen }[fsTab];
   $('#fsb').innerHTML = f();
 }
 function fsPL() {
@@ -998,4 +1021,45 @@ function fySelect() {
   return `<select class="fysel" onchange="changeFY(this.value)">` +
     fyList().map(y => `<option value="${y}"${y === SET.fy ? ' selected' : ''}>${y}</option>`).join('') +
     `</select>`;
+}
+
+// ---------- 費用分析 (科目 × 月) ----------
+let expInc = 'BIZ';
+function fsExp() {
+  const months = [];
+  for (let i = 1; i <= 12; i++) months.push(String(i).padStart(2, '0'));
+  const grid = {}, mTot = {}, aTot = {};
+  jOfFY().forEach(j => {
+    if (isPreOpen(j)) return;
+    if ((j.inc || 'BIZ') !== expInc) return;
+    if (acct(j.dr).k !== 'E') return;
+    const mo = j.dt.slice(5, 7), c = j.dr, v = bizAmt(j);
+    grid[c] = grid[c] || {};
+    grid[c][mo] = (grid[c][mo] || 0) + v;
+    mTot[mo] = (mTot[mo] || 0) + v;
+    aTot[c] = (aTot[c] || 0) + v;
+  });
+  const codes = Object.keys(grid).map(Number).sort((x, y) => (aTot[y] - aTot[x]));
+  const gTot = Object.values(aTot).reduce((s, v) => s + v, 0);
+  if (!codes.length) return `<div class="card"><p class="mut">${T('noData')}</p></div>`;
+  const head = `<tr><th>${T('slipDr')}</th>${months.map(m => `<th class="r">${+m}</th>`).join('')}
+    <th class="r">${T('total')}</th><th class="r">${T('ratioPct')}</th></tr>`;
+  const body = codes.map(c => `<tr>
+    <td class="nw">${esc(acctDisp(c))}</td>
+    ${months.map(m => {
+      const v = (grid[c] || {})[m] || 0;
+      return `<td class="r ${v ? '' : 'z'}">${v ? yen(v) : ''}</td>`;
+    }).join('')}
+    <td class="r"><b>${yen(aTot[c])}</b></td>
+    <td class="r mut">${(aTot[c] / gTot * 100).toFixed(1)}%</td></tr>`).join('');
+  const foot = `<tr class="tot"><td>${T('total')}</td>
+    ${months.map(m => `<td class="r">${mTot[m] ? yen(mTot[m]) : ''}</td>`).join('')}
+    <td class="r">${yen(gTot)}</td><td></td></tr>`;
+  return `<div class="card"><h3>${T('tabExp')}
+      <select class="fysel" onchange="expInc=this.value;rFSBody()">
+        <option value="BIZ"${expInc === 'BIZ' ? ' selected' : ''}>${T('incBiz')}</option>
+        <option value="RE"${expInc === 'RE' ? ' selected' : ''}>${T('incRE')}</option>
+      </select></h3>
+    <div class="scrollx"><table class="tb mtx">${head}${body}${foot}</table></div>
+    <p class="mut">${T('expNote')}</p></div>`;
 }
