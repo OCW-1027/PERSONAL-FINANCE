@@ -22,6 +22,7 @@ function loadD() {
 }
 function saveD() {
   D._saved = new Date().toISOString();
+  localStorage.removeItem(PFX + 'recoverDeclined');
   try { localStorage.setItem(PFX + 'data', JSON.stringify(D)); }
   catch (e) { alert(T('storageFull')); }
   if (typeof SAFE !== 'undefined') {
@@ -757,6 +758,7 @@ function impBackup(el) {
 function resetAll() {
   if (!confirm(T('confirmReset'))) return;
   localStorage.removeItem(PFX + 'data'); localStorage.removeItem(PFX + 'set');
+  localStorage.setItem(PFX + 'recoverDeclined', '1');   // 意図的削除 → 復旧提案しない
   location.reload();
 }
 
@@ -789,17 +791,21 @@ window.addEventListener('DOMContentLoaded', () => {
   if (typeof FB !== 'undefined') FB.init();
   applyNavLabels();
   const hasLocal = !!localStorage.getItem(PFX + 'data');
-  // キャッシュ消去などで localStorage が空 → スナップショットから復旧提案
-  if (!hasLocal && typeof SAFE !== 'undefined') {
+  loadD();
+  // 復旧提案は「本当にデータが無い」場合のみ・1回だけ
+  const declined = localStorage.getItem(PFX + 'recoverDeclined');
+  if (!hasLocal && !declined && (D.journals || []).length === 0 && typeof SAFE !== 'undefined') {
     SAFE.checkRecovery(false).then(s => {
-      if (s && confirm(T('recoverAsk', { n: s.count }))) {
+      if (!s) return;
+      if (confirm(T('recoverAsk', { n: s.count }))) {
         const o = JSON.parse(s.data);
         if (o.D) D = o.D; if (o.SET) SET = o.SET;
         saveD(); saveS(); loadD(); toast(T('recovered'), 'ok'); go('dash');
+      } else {
+        localStorage.setItem(PFX + 'recoverDeclined', '1');   // 二度と聞かない
       }
     }).catch(() => {});
   }
-  loadD();
   if (!SET.ownerName && !D.journals.length) {
     // 初回セットアップ
     $('#v').innerHTML = `<div class="card wiz"><div class="wiz-logo"><b>PFS</b><small>Personal Finance System</small></div><h2>${T('welcome')}</h2>
