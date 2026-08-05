@@ -319,7 +319,7 @@ function rSlip() {
       <label>${T('slipCr')}<select id="f_cr">${opts()}</select></label>
       <label>${T('amtIncl')}<input type="number" id="f_amt" placeholder="0"></label>
       <label>${T('desc')}<input id="f_desc" placeholder=""></label>
-      <label>${T('vendor')} <span class="req">${T('required')}</span><input id="f_ven" placeholder="${T('vendorPh')}"></label>
+      <label><span class="lb">${T('vendor')} <i class="req">${T('required')}</i></span><input id="f_ven" placeholder="${T('vendorPh')}"></label>
       <label>${T('taxCls')}<select id="f_tax"><option>課10</option><option>課8</option><option>不課税</option><option>非課税</option><option>免税</option></select></label>
       <label>${T('incType')}<select id="f_inc"><option value="BIZ">${T('incBiz')}</option><option value="RE">${T('incRE')}</option></select></label>
     </div>
@@ -569,9 +569,11 @@ function fsOpen() {
       <tr class="tot"><td>${T('openLeft')}</td><td class="r">${yen(tot - used)}</td></tr>
     </table>
     <h4>${T('openAmort',{y:SET.fy})}</h4>
-    <input type="number" id="amt_am" value="${am[SET.fy] || 0}" style="width:160px">
-    <button class="btn" onclick="setAmort()">${T('apply')}</button>
-    <button class="btn gray" onclick="$('#amt_am').value=${tot - used + (am[SET.fy] || 0)};setAmort()">${T('openAll')}</button>
+    <div class="row btns">
+      <input type="number" id="amt_am" value="${am[SET.fy] || 0}" style="width:160px">
+      <button class="btn" onclick="setAmort()">${T('apply')}</button>
+      <button class="btn gray" onclick="$('#amt_am').value=${tot - used + (am[SET.fy] || 0)};setAmort()">${T('openAll')}</button>
+    </div>
     <p class="mut">${T('openNote')}</p></div>`;
 }
 function setAmort() {
@@ -594,7 +596,7 @@ function rRE() {
       <label>${T('slipDr')}<select id="r_acc">${opt('E')}</select></label>
       <label>${T('amtIncl')}<input type="number" id="r_amt" placeholder="0"></label>
       <label>${T('desc')}<input id="r_desc"></label>
-      <label>${T('vendor')} <span class="req">${T('required')}</span><input id="r_ven" placeholder="${T('vendorPh')}"></label>
+      <label><span class="lb">${T('vendor')} <i class="req">${T('required')}</i></span><input id="r_ven" placeholder="${T('vendorPh')}"></label>
     </div>
     <div class="row btns"><button class="btn" onclick="addRE()">${T('add')}</button></div>
   </div>
