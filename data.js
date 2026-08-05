@@ -331,7 +331,19 @@ const INIT_JOURNALS = [
   {id:1049,dt:"2026-12-27",dr:612,cr:250,amt:43696,desc:"ローン利子/管理費及び修繕積立金",vendor:"金融機関",tax:"不課税",inc:"RE"},
   {id:1050,dt:"2026-12-27",dr:616,cr:250,amt:41433,desc:"ローン利子/管理費及び修繕積立金",vendor:"管理会社",tax:"不課税",inc:"RE"},
   {id:1051,dt:"2026-12-28",dr:611,cr:250,amt:943200,desc:"減価償却費",vendor:"業者",tax:"不課税",inc:"RE"},
-  {id:1052,dt:"2026-08-03",dr:111,cr:401,amt:850000,desc:"業務委託料(7月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"}
+  {id:1052,dt:"2026-08-03",dr:111,cr:401,amt:850000,desc:"業務委託料(7月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
+  {id:1053,dt:"2026-01-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1054,dt:"2026-02-14",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1055,dt:"2026-03-13",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1056,dt:"2026-04-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1057,dt:"2026-05-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1058,dt:"2026-06-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1059,dt:"2026-07-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1060,dt:"2026-08-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1061,dt:"2026-09-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1062,dt:"2026-10-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1063,dt:"2026-11-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1064,dt:"2026-12-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
