@@ -151,15 +151,28 @@ function calcBS() {
   const lt = liab.reduce((s, x) => s + x.v, 0);
   const pl = calcPL('BIZ'), plRE = calcPL('RE');
   const income = pl.income + plRE.income;
+  // 元入金: 前年度を締めた場合のみ当年度期首に計上
+  const closed = (D.fyHistory || {});
+  const motoire = closed[SET.fy - 1] ? (D.motoire || 0) : 0;
+  if (motoire) {
+    cap.push({ c: 300, n: '元入金', v: motoire, g: '資本' });
+    asset.push({ c: 111, n: acctName(111), v: motoire, g: '流動資産', carry: 1 });
+  }
+  const at2 = asset.reduce((s, x) => s + x.v, 0);
   // 事業主借 = 貸借を一致させる調達額 (個人資金の投入)
-  const motoire = D.motoire || 0;
-  const borrow = at - lt - motoire - income;
+  const borrow = at2 - lt - motoire - income;
   if (borrow) liab.push({ c: 250, n: '事業主借', v: borrow, g: '事業主' });
-  if (motoire) cap.push({ c: 300, n: '元入金', v: motoire, g: '資本' });
   cap.push({ c: 310, n: '青色申告特別控除前所得', v: income, g: '資本' });
+  // 同一科目をまとめる
+  const merged = [];
+  asset.forEach(x => {
+    const f = merged.find(m => m.c === x.c);
+    if (f) f.v += x.v; else merged.push(Object.assign({}, x));
+  });
+  const atF = merged.reduce((s, x) => s + x.v, 0);
   const lt2 = liab.reduce((s, x) => s + x.v, 0);
   const ct = cap.reduce((s, x) => s + x.v, 0);
-  return { asset, liab, cap, assetTotal: at, liabTotal: lt2, capTotal: ct, diff: at - lt2 - ct };
+  return { asset: merged, liab, cap, assetTotal: atF, liabTotal: lt2, capTotal: ct, diff: atF - lt2 - ct };
 }
 
 // ---------- 税額計算 ----------
@@ -233,7 +246,7 @@ function rDash() {
   const pct = Math.min(100, t.limit ? t.judge / t.limit * 100 : 0);
   const bar = t.keep ? (pct > 85 ? 'warn' : 'ok') : 'bad';
   const pl = calcPL('BIZ');
-  let h = `<h2>${T('dash')} <span class="sub">${SET.fy}</span></h2>`;
+  let h = `<h2>${T('dash')} ${fySelect()}</h2>`;
   if (SET.allowanceTrack) {
     h += `<div class="card gauge">
       <div class="grow"><b>${T('judgeIncome')}</b> <span class="big">${yen(t.judge)}</span> / ${yen(t.limit)}
@@ -418,39 +431,62 @@ function rGLBody() {
 // ---------- 決算書 ----------
 let fsTab = 'pl';
 function rFS() {
-  $('#v').innerHTML = `<h2>${T('fs')}</h2>
-  <div class="tabs">${[['pl', T('tabPL')], ['bs', T('tabBS')], ['blue', T('tabBlue')], ['white', T('tabWhite')], ['ratio', T('tabRatio')], ['open', T('tabOpen')]]
+  $('#v').innerHTML = `<h2>${T('fs')} ${fySelect()}</h2>
+  <div class="tabs">${[['pl', T('tabPL')], ['bs', T('tabBS')], ['tb', T('tabTB')], ['blue', T('tabBlue')], ['white', T('tabWhite')], ['ratio', T('tabRatio')], ['open', T('tabOpen')]]
       .map(t => `<a href="#" onclick="fsTab='${t[0]}';rFSBody();return false" class="${fsTab === t[0] ? 'on' : ''}">${t[1]}</a>`).join('')}</div>
   <div id="fsb"></div>`;
   rFSBody();
 }
 function rFSBody() {
-  document.querySelectorAll('.tabs a').forEach((a, i) => a.classList.toggle('on', ['pl', 'bs', 'blue', 'white', 'ratio', 'open'][i] === fsTab));
-  const f = { pl: fsPL, bs: fsBS, blue: fsBlue, white: fsWhite, ratio: fsRatio, open: fsOpen }[fsTab];
+  document.querySelectorAll('.tabs a').forEach((a, i) => a.classList.toggle('on', ['pl', 'bs', 'tb', 'blue', 'white', 'ratio', 'open'][i] === fsTab));
+  const f = { pl: fsPL, bs: fsBS, tb: fsTB, blue: fsBlue, white: fsWhite, ratio: fsRatio, open: fsOpen }[fsTab];
   $('#fsb').innerHTML = f();
 }
 function fsPL() {
   const b = calcPL('BIZ'), r = calcPL('RE');
-  const sec = (t, o, empty) => `<div class="card"><h3>${t}</h3><table class="tb">
-    <tr class="hd"><td>${T('revSec')}</td><td class="r"></td></tr>
-    ${o.rev.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
-      || `<tr><td class="mut">${T('none')}</td><td></td></tr>`}
-    <tr class="sub2"><td>${T('revTotal')}</td><td class="r">${yen(o.revTotal)}</td></tr>
-    <tr class="hd"><td>${T('expSec')}</td><td class="r"></td></tr>
-    ${o.exp.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
-      || `<tr><td class="mut">${T('none')}</td><td></td></tr>`}
-    <tr class="sub2"><td>${T('expTotal')}</td><td class="r">${yen(o.expTotal)}</td></tr>
-    <tr class="tot"><td>${T('netIncome')}</td><td class="r">${yen(o.income)}</td></tr></table>
-    ${empty || ''}</div>`;
-  const total = b.income + r.income;
-  return `<div class="grid2">${sec(T('bizIncome'), b)}${sec(T('reIncome'), r,
-      `<p class="mut">${T('reHint')}</p>`)}</div>
-    <div class="card"><table class="tb">
-      <tr><td>${T('bizIncome')}</td><td class="r">${yen(b.income)}</td></tr>
-      <tr><td>${T('reIncome')}</td><td class="r">${yen(r.income)}</td></tr>
-      <tr class="tot"><td>${T('totalIncome')} (${T('aggregate')})</td><td class="r">${yen(total)}</td></tr>
+  const bd = blueDed();
+  const bizNet = Math.max(0, b.income - bd);
+  const total = bizNet + r.income;
+  const nm = SET.ownerName || '', fy = SET.fy;
+  const row = (l, v, cls) => `<tr class="${cls || ''}"><td>${l}</td><td class="r">${yen(v)}</td></tr>`;
+  const item = x => `<tr><td class="ind">${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`;
+  // --- 事業所得 ---
+  let h = `<div class="card fsdoc">
+    <div class="fshd"><h3>${T('plTitle')}</h3>
+      <div class="mut">${esc(nm)}${nm ? ' · ' : ''}${fy}.01.01 ～ ${fy}.12.31 · ${T('unitYen')}</div></div>
+    <table class="tb doc">
+      <tr class="sec"><td>Ⅰ ${T('plRev')}</td><td class="r">${yen(b.revTotal)}</td></tr>
+      ${b.rev.map(item).join('')}
+      <tr class="sec"><td>Ⅱ ${T('plExp')}</td><td class="r"></td></tr>
+      ${b.exp.map(item).join('')}
+      ${row(T('expTotal'), b.expTotal, 'sub2')}
+      ${row(T('plNet'), b.income, 'sub2 em')}
+      <tr class="sec"><td>Ⅲ ${T('blueDed')}</td><td class="r">${yen(bd)}</td></tr>
+      ${row(T('bizIncomeAmt'), bizNet, 'tot')}
+    </table>
+    <p class="mut">${T('filingType')}: ${{ white: T('typeWhite'), blue65: T('typeBlue65'), blue55: T('typeBlue55'), blue10: T('typeBlue10') }[SET.filingType]}</p>
+  </div>`;
+  // --- 不動産所得 ---
+  h += `<div class="card fsdoc">
+    <div class="fshd"><h3>${T('reTitle')}</h3></div>
+    <table class="tb doc">
+      <tr class="sec"><td>Ⅰ ${T('plRev')}</td><td class="r">${yen(r.revTotal)}</td></tr>
+      ${r.rev.map(item).join('') || `<tr><td class="ind mut">${T('none')}</td><td></td></tr>`}
+      <tr class="sec"><td>Ⅱ ${T('reExp')}</td><td class="r"></td></tr>
+      ${r.exp.map(item).join('') || `<tr><td class="ind mut">${T('none')}</td><td></td></tr>`}
+      ${row(T('expTotal'), r.expTotal, 'sub2')}
+      ${row(T('reIncome'), r.income, 'tot')}
+    </table>
+    <p class="mut">${T('reHint')}</p></div>`;
+  // --- 合計 ---
+  h += `<div class="card fsdoc sum"><table class="tb doc">
+      ${row(T('bizIncomeAmt'), bizNet)}
+      ${row(T('reIncome'), r.income)}
+      ${row(T('totalIncome') + ' (' + T('aggregate') + ')', total, 'tot')}
     </table><p class="mut">${T('aggregateNote')}</p></div>`;
+  return h;
 }
+
 function fsBS() {
   const b = calcBS();
   const rows = arr => arr.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
@@ -651,6 +687,10 @@ function rSet() {
       <button class="btn red" onclick="resetAll()">${T('resetAll')}</button>
     </div>
     <p class="mut" id="bkinfo"></p>
+  </div>
+  <div class="card"><h3>${T('rollTitle')}</h3>
+    <p class="mut">${T('rollNote')}</p>
+    <button class="btn" onclick="rollOver()">${T('rollBtn', { a: SET.fy, b: SET.fy + 1 })}</button>
   </div>
   <div class="card"><h3>${T('snapTitle')}</h3>
     <p class="mut">${T('snapNote')}</p>
@@ -883,4 +923,77 @@ function addRE() {
     tax: isRev ? '非課税' : '不課税', inc: 'RE'
   });
   saveD(); toast(T('registered'), 'ok'); rRE();
+}
+
+// ---------- 試算表 ----------
+function fsTB() {
+  const map = {};
+  jOfFY().forEach(j => {
+    if (isPreOpen(j)) return;
+    const v = bizAmt(j);
+    [[j.dr, v, 0], [j.cr, 0, v]].forEach(([c, d, cr]) => {
+      if (!map[c]) map[c] = { c: c, d: 0, cr: 0 };
+      map[c].d += d; map[c].cr += cr;
+    });
+  });
+  const list = Object.values(map).sort((x, y) => x.c - y.c);
+  let td = 0, tc = 0, tbd = 0, tbc = 0;
+  const rows = list.map(x => {
+    const k = acct(x.c).k;
+    const bal = x.d - x.cr;
+    // 資産/費用は借方残、負債/資本/収益は貸方残
+    const dr = (k === 'A' || k === 'E') ? Math.max(0, bal) : (bal > 0 ? bal : 0);
+    const crb = (k === 'L' || k === 'C' || k === 'R') ? Math.max(0, -bal) : (bal < 0 ? -bal : 0);
+    td += x.d; tc += x.cr; tbd += dr; tbc += crb;
+    return `<tr><td>${x.c}</td><td>${esc(acctDisp(x.c))}</td>
+      <td class="r">${x.d ? yen(x.d) : ''}</td><td class="r">${x.cr ? yen(x.cr) : ''}</td>
+      <td class="r">${dr ? '<b>' + yen(dr) + '</b>' : ''}</td><td class="r">${crb ? '<b>' + yen(crb) + '</b>' : ''}</td></tr>`;
+  }).join('');
+  const ok = Math.abs(td - tc) < 1;
+  return `<div class="card"><h3>${T('tabTB')} <span class="mut">${SET.fy}</span></h3>
+    <div class="scrollx"><table class="tb">
+      <tr><th>${T('code')}</th><th>${T('slipDr')}</th><th class="r">${T('debit')}</th><th class="r">${T('credit')}</th>
+        <th class="r">${T('drBal')}</th><th class="r">${T('crBal')}</th></tr>
+      ${rows}
+      <tr class="tot"><td colspan="2">${T('total')}</td><td class="r">${yen(td)}</td><td class="r">${yen(tc)}</td>
+        <td class="r">${yen(tbd)}</td><td class="r">${yen(tbc)}</td></tr>
+    </table></div>
+    <div class="alert ${ok ? 'ok' : 'bad'}">${ok ? T('tbMatch') : T('tbDiff', { n: yen(td - tc) })}</div></div>`;
+}
+
+// ---------- 年度切替 ----------
+function fyList() {
+  const s = new Set(D.journals.map(j => +String(j.dt).slice(0, 4)));
+  s.add(SET.fy); s.add(new Date().getFullYear());
+  return [...s].filter(x => x > 2000).sort((a, b) => b - a);
+}
+function changeFY(y) {
+  SET.fy = +y; saveS();
+  toast(T('fyChanged', { y: y }), 'ok');
+  go((location.hash || '#dash').slice(1));
+}
+// 年度繰越: 元入金 = 前年元入金 + 前年所得 + 事業主借 − 事業主貸
+function rollOver() {
+  const from = SET.fy, to = from + 1;
+  if (!confirm(T('rollConfirm', { a: from, b: to }))) return;
+  const biz = calcPL('BIZ').income, re = calcPL('RE').income;
+  const bs = calcBS();
+  const draw = (bs.asset.find(x => x.c === 150) || { v: 0 }).v;
+  const borrow = (bs.liab.find(x => x.c === 250) || { v: 0 }).v;
+  const prevMoto = D.motoire || 0;
+  const newMoto = Math.round(prevMoto + biz + re + borrow - draw);
+  if (typeof SAFE !== 'undefined') SAFE.snapshot(D, SET, 'before-rollover');
+  D.motoire = newMoto;
+  D.fyHistory = D.fyHistory || {};
+  D.fyHistory[from] = { biz: biz, re: re, motoire: prevMoto, closed: new Date().toISOString() };
+  SET.fy = to;
+  saveD(); saveS();
+  alert(T('rollDone', { y: to, n: yen(newMoto) }));
+  go('dash');
+}
+
+function fySelect() {
+  return `<select class="fysel" onchange="changeFY(this.value)">` +
+    fyList().map(y => `<option value="${y}"${y === SET.fy ? ' selected' : ''}>${y}</option>`).join('') +
+    `</select>`;
 }

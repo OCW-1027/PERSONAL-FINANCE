@@ -130,3 +130,13 @@ textarea{font-family:monospace;font-size:12px}
 .bschk{max-width:520px}
 .bschk.ok .tot td{background:#e8f5e9;border-top-color:#2e7d32;color:#2e7d32}
 .bschk.bad .tot td{background:#fdecea;border-top-color:#c0392b;color:#c0392b}
+
+/* 決算書 ドキュメント風 */
+.fsdoc{max-width:640px}
+.fsdoc .fshd{text-align:center;border-bottom:2px solid #1f3a5f;padding-bottom:8px;margin-bottom:10px}
+.fsdoc .fshd h3{margin:0;letter-spacing:.25em;font-size:16px}
+.tb.doc .sec td{background:#eef4fb;font-weight:700;color:#1f3a5f;border-top:1px solid #c7d6ea}
+.tb.doc td.ind{padding-left:26px;color:#334155}
+.tb.doc .em td{color:#1f3a5f}
+.fsdoc.sum{background:#f8fafc}
+.fysel{display:inline-block;width:auto;margin-left:10px;padding:4px 8px;font-size:13px;vertical-align:middle}
