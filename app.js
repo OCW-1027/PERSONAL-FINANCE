@@ -453,12 +453,31 @@ function fsPL() {
 }
 function fsBS() {
   const b = calcBS();
-  const col = (t, arr, tot) => `<div class="card"><h3>${t}</h3><table class="tb">
-    ${arr.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')}
-    <tr class="tot"><td>${T('total')}</td><td class="r">${yen(tot)}</td></tr></table></div>`;
-  return `<div class="grid2">${col(T('assets'), b.asset, b.assetTotal)}
-    <div>${col(T('liabilities'), b.liab, b.liabTotal)}${col(T('capital'), b.cap, b.capTotal)}</div></div>
-    ${Math.abs(b.diff) > 1 ? `<div class="alert warn">${T('bsDiff',{n:yen(b.diff)})}</div>` : `<div class="alert ok">${T('bsMatch')}</div>`}`;
+  const rows = arr => arr.map(x => `<tr><td>${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`).join('')
+    || `<tr><td class="mut">${T('none')}</td><td></td></tr>`;
+  const lc = b.liabTotal + b.capTotal;
+  const ok = Math.abs(b.diff) <= 1;
+  return `<div class="grid2">
+    <div class="card"><h3>${T('assets')}</h3><table class="tb">
+      ${rows(b.asset)}
+      <tr class="tot"><td>${T('assetTotal')}</td><td class="r">${yen(b.assetTotal)}</td></tr>
+    </table></div>
+    <div>
+      <div class="card"><h3>${T('liabilities')}</h3><table class="tb">
+        ${rows(b.liab)}
+        <tr class="sub2"><td>${T('liabTotal')}</td><td class="r">${yen(b.liabTotal)}</td></tr>
+      </table></div>
+      <div class="card"><h3>${T('capital')}</h3><table class="tb">
+        ${rows(b.cap)}
+        <tr class="sub2"><td>${T('capTotal')}</td><td class="r">${yen(b.capTotal)}</td></tr>
+        <tr class="tot"><td>${T('lcTotal')}</td><td class="r">${yen(lc)}</td></tr>
+      </table></div>
+    </div></div>
+    <div class="card bschk ${ok ? 'ok' : 'bad'}"><table class="tb">
+      <tr><td>${T('assetTotal')}</td><td class="r">${yen(b.assetTotal)}</td></tr>
+      <tr><td>${T('lcTotal')}</td><td class="r">${yen(lc)}</td></tr>
+      <tr class="tot"><td>${T('bsGap')}</td><td class="r">${yen(b.diff)} ${ok ? '✓' : '⚠'}</td></tr>
+    </table>${ok ? '' : `<p class="mut">${T('bsDiff', { n: yen(b.diff) })}</p>`}</div>`;
 }
 function fsBlue() {
   const t = calcTax(), b = calcPL('BIZ');
@@ -696,6 +715,10 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
 }
 
+window.addEventListener('hashchange', () => {
+  const p = (location.hash || '#dash').slice(1);
+  if (p) go(p);
+});
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof initLang === 'function') initLang();
   if (typeof FB !== 'undefined') FB.init();

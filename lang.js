@@ -109,6 +109,11 @@ const LANG = {
     aggregateNote: "사업소득과 부동산소득은 손익통산됩니다. 주식·CFD는 분리과세이므로 여기에 합산되지 않습니다.",
     reHint: "※ 부동산 탭에서 입력합니다",
     reKind: "구분",
+    assetTotal: "자산 합계",
+    liabTotal: "부채 합계",
+    capTotal: "자본 합계",
+    lcTotal: "부채·자본 합계",
+    bsGap: "차대 차액",
     // --- 마법사 ---
     welcome: "환영합니다",
     welcomeMsg: "개인사업자를 위한 재무관리 시스템입니다. 먼저 기본정보를 설정해주세요.",
@@ -212,6 +217,11 @@ const LANG = {
     aggregateNote: "事業所得と不動産所得は損益通算されます。株式・CFDは分離課税のためここには合算されません。",
     reHint: "※ 不動産タブで入力します",
     reKind: "区分",
+    assetTotal: "資産合計",
+    liabTotal: "負債合計",
+    capTotal: "資本合計",
+    lcTotal: "負債・資本合計",
+    bsGap: "貸借差額",
     welcome: "ようこそ",
     welcomeMsg: "個人事業主のための財務管理システムです。まず基本情報を設定してください。",
     start: "開始する", namePh: "山田 太郎"
