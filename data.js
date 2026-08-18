@@ -343,7 +343,14 @@ const INIT_JOURNALS = [
   {id:1061,dt:"2026-09-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
   {id:1062,dt:"2026-10-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
   {id:1063,dt:"2026-11-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
-  {id:1064,dt:"2026-12-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"}
+  {id:1064,dt:"2026-12-15",dr:619,cr:250,amt:330,desc:"振込手数料(家賃送金)",vendor:"管理会社",tax:"課10",inc:"RE"},
+  {id:1065,dt:"2026-08-04",dr:518,cr:250,amt:3200,desc:"業務ミーティング(飲食)",vendor:"香港飯店 上野店",tax:"課10",inc:"BIZ"},
+  {id:1066,dt:"2026-08-06",dr:518,cr:250,amt:1370,desc:"業務ミーティング(飲食)",vendor:"サンマルクカフェ 神田北口店",tax:"課10",inc:"BIZ"},
+  {id:1067,dt:"2026-08-06",dr:518,cr:250,amt:6480,desc:"業務ミーティング(飲食)",vendor:"AJILLO 神田西口店",tax:"課10",inc:"BIZ"},
+  {id:1068,dt:"2026-08-07",dr:504,cr:250,amt:8581,desc:"長崎出張 宿泊",vendor:"ホテルフォルツァ長崎(Agoda)",tax:"課10",inc:"BIZ"},
+  {id:1069,dt:"2026-08-08",dr:518,cr:250,amt:13618,desc:"業務ミーティング(飲食)",vendor:"ロイヤルホスト",tax:"課10",inc:"BIZ"},
+  {id:1070,dt:"2026-08-16",dr:504,cr:250,amt:13700,desc:"大阪・釜山出張 空港駐車料(8/12~16)",vendor:"東京国際空港P1駐車場",tax:"課10",inc:"BIZ"},
+  {id:1071,dt:"2026-08-17",dr:504,cr:250,amt:2420,desc:"外勤駐車料",vendor:"パイン株式会社(SANパーク下北沢1)",tax:"課10",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
