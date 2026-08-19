@@ -792,6 +792,7 @@ window.addEventListener('DOMContentLoaded', () => {
   applyNavLabels();
   const hasLocal = !!localStorage.getItem(PFX + 'data');
   loadD();
+  checkDataUpdate();
   // 復旧提案は「本当にデータが無い」場合のみ・1回だけ
   const declined = localStorage.getItem(PFX + 'recoverDeclined');
   if (!hasLocal && !declined && (D.journals || []).length === 0 && typeof SAFE !== 'undefined') {
@@ -1068,4 +1069,29 @@ function fsExp() {
       </select></h3>
     <div class="scrollx"><table class="tb mtx">${head}${body}${foot}</table></div>
     <p class="mut">${T('expNote')}</p></div>`;
+}
+
+// ---------- データ更新チェック (data.js が新しい場合) ----------
+function checkDataUpdate() {
+  if (typeof DATA_VER === 'undefined') return;
+  const seen = +(localStorage.getItem(PFX + 'dataVer') || 0);
+  if (DATA_VER <= seen) return;
+  // 初回(保存データなし)は黙って取り込む
+  if (!(D.journals || []).length) { localStorage.setItem(PFX + 'dataVer', DATA_VER); return; }
+  // 差分 = data.js にあって手元に無い伝票
+  const key = j => j.dt + '|' + j.dr + '|' + j.amt + '|' + (j.desc || '');
+  const have = new Set(D.journals.map(key));
+  const add = INIT_JOURNALS.filter(j => !have.has(key(j)));
+  localStorage.setItem(PFX + 'dataVer', DATA_VER);
+  if (!add.length) return;
+  const sum = add.reduce((s, j) => s + (j.amt || 0), 0);
+  if (!confirm(T('dataUpdAsk', { n: add.length, m: yen(sum) }))) return;
+  if (typeof SAFE !== 'undefined') SAFE.snapshot(D, SET, 'before-data-update');
+  let mx = D.seq || 0;
+  D.journals.forEach(j => { if (j.id > mx) mx = j.id; });
+  add.forEach(j => { mx++; D.journals.push(Object.assign({}, j, { id: mx })); });
+  D.seq = mx;
+  saveD();
+  toast(T('dataUpdDone', { n: add.length }), 'ok');
+  go((location.hash || '#dash').slice(1));
 }
