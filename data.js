@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20260819;   // yyyymmdd
+const DATA_VER = 20260831;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -355,7 +355,21 @@ const INIT_JOURNALS = [
   {id:1068,dt:"2026-08-07",dr:504,cr:250,amt:8581,desc:"長崎出張 宿泊",vendor:"ホテルフォルツァ長崎(Agoda)",tax:"課10",inc:"BIZ"},
   {id:1069,dt:"2026-08-08",dr:518,cr:250,amt:13618,desc:"業務ミーティング(飲食)",vendor:"ロイヤルホスト",tax:"課10",inc:"BIZ"},
   {id:1070,dt:"2026-08-16",dr:504,cr:250,amt:13700,desc:"大阪・釜山出張 空港駐車料(8/12~16)",vendor:"東京国際空港P1駐車場",tax:"課10",inc:"BIZ"},
-  {id:1071,dt:"2026-08-17",dr:504,cr:250,amt:2420,desc:"外勤駐車料",vendor:"パイン株式会社(SANパーク下北沢1)",tax:"課10",inc:"BIZ"}
+  {id:1071,dt:"2026-08-17",dr:504,cr:250,amt:2420,desc:"外勤駐車料",vendor:"パイン株式会社(SANパーク下北沢1)",tax:"課10",inc:"BIZ"},
+  {id:1072,dt:"2026-08-07",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"課10",inc:"BIZ"},
+  {id:1073,dt:"2026-08-07",dr:504,cr:250,amt:69980,desc:"長崎出張 往復航空券(東京-長崎)",vendor:"JAL(日本航空)",tax:"課10",inc:"BIZ"},
+  {id:1074,dt:"2026-08-08",dr:503,cr:250,amt:1980,desc:"上下水道料金(自宅·7~8月分)",vendor:"水道局",tax:"課10",inc:"BIZ"},
+  {id:1075,dt:"2026-08-21",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"課10",inc:"BIZ"},
+  {id:1076,dt:"2026-08-21",dr:504,cr:250,amt:143660,desc:"ベトナム出張 往復航空券(ワイソル·9月分)",vendor:"航空会社",tax:"免税*",inc:"BIZ"},
+  {id:1077,dt:"2026-08-24",dr:503,cr:250,amt:6270,desc:"電気料金(自宅·8月分)",vendor:"電力会社",tax:"課10",inc:"BIZ"},
+  {id:1078,dt:"2026-08-25",dr:518,cr:250,amt:4460,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1079,dt:"2026-08-28",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"課10",inc:"BIZ"},
+  {id:1080,dt:"2026-08-28",dr:503,cr:250,amt:1536,desc:"ガス料金(自宅·8月分)",vendor:"ガス会社",tax:"課10",inc:"BIZ"},
+  {id:1081,dt:"2026-08-29",dr:504,cr:250,amt:1600,desc:"外勤 駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1082,dt:"2026-08-29",dr:518,cr:250,amt:15890,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1083,dt:"2026-08-17",dr:505,cr:250,amt:2860,desc:"ChatGPT 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1084,dt:"2026-08-20",dr:505,cr:250,amt:2900,desc:"Gemini 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1085,dt:"2026-08-25",dr:505,cr:250,amt:17518,desc:"Claude 月額($110·159.2529円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
