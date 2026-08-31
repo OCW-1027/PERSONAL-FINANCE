@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20260901;   // yyyymmdd
+const DATA_VER = 20260902;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -368,7 +368,8 @@ const INIT_JOURNALS = [
   {id:1082,dt:"2026-08-29",dr:518,cr:250,amt:15890,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
   {id:1083,dt:"2026-08-17",dr:505,cr:250,amt:2860,desc:"ChatGPT 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
   {id:1084,dt:"2026-08-20",dr:505,cr:250,amt:2900,desc:"Gemini 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
-  {id:1085,dt:"2026-08-25",dr:505,cr:250,amt:17518,desc:"Claude 月額($110·159.2529円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
+  {id:1085,dt:"2026-08-25",dr:505,cr:250,amt:17518,desc:"Claude 月額($110·159.2529円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
+  {id:1086,dt:"2026-08-31",dr:111,cr:401,amt:850000,desc:"業務委託料(8月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
