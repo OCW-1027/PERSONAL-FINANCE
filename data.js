@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20260902;   // yyyymmdd
+const DATA_VER = 20260903;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -46,7 +46,7 @@ const ACCT_INIT = [
   {c:411,n:"不動産賃貸料",k:"R",g:"不動産",inc:"RE"},
   {c:412,n:"礼金・更新料",k:"R",g:"不動産",inc:"RE"},
   // === 費用 (青色申告決算書 掲載順) ===
-  {c:501,n:"租税公課",k:"E",g:"経費",d:1},
+  {c:501,n:"租税公課",k:"E",g:"経費",d:1,h:1},
   {c:502,n:"荷造運賃",k:"E",g:"経費",d:2},
   {c:503,n:"水道光熱費",k:"E",g:"経費",d:3,h:1},
   {c:504,n:"旅費交通費",k:"E",g:"経費",d:4},
@@ -120,7 +120,7 @@ const DEF_SET = {
   fy: 2026,
   openDate: "2026-07-01",
   filingType: "white",        // white | blue65 | blue55 | blue10
-  ratios: { 503:0.33, 516:0.33 },
+  ratios: { 503:0.33, 516:0.33, 521:0.99, 501:0.99, 508:0.99 },
   ratioBasis: "実労働8時間(休憩1時間除く)×週7日÷168時間=33.3% → 33%",
   usdRate: 160,
   deductionSet: {
@@ -369,7 +369,9 @@ const INIT_JOURNALS = [
   {id:1083,dt:"2026-08-17",dr:505,cr:250,amt:2860,desc:"ChatGPT 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
   {id:1084,dt:"2026-08-20",dr:505,cr:250,amt:2900,desc:"Gemini 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
   {id:1085,dt:"2026-08-25",dr:505,cr:250,amt:17518,desc:"Claude 月額($110·159.2529円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
-  {id:1086,dt:"2026-08-31",dr:111,cr:401,amt:850000,desc:"業務委託料(8月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"}
+  {id:1086,dt:"2026-08-31",dr:111,cr:401,amt:850000,desc:"業務委託料(8月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
+  {id:1087,dt:"2026-09-01",dr:521,cr:250,amt:76420,desc:"車検 整備費",vendor:"整備工場",tax:"課10",inc:"BIZ"},
+  {id:1088,dt:"2026-09-01",dr:501,cr:250,amt:53960,desc:"車検 重量税·自賠責保険·印紙代",vendor:"整備工場",tax:"不課税",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
