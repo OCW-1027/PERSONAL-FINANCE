@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20260903;   // yyyymmdd
+const DATA_VER = 20261001;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -371,7 +371,39 @@ const INIT_JOURNALS = [
   {id:1085,dt:"2026-08-25",dr:505,cr:250,amt:17518,desc:"Claude 月額($110·159.2529円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
   {id:1086,dt:"2026-08-31",dr:111,cr:401,amt:850000,desc:"業務委託料(8月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
   {id:1087,dt:"2026-09-01",dr:521,cr:250,amt:76420,desc:"車検 整備費",vendor:"整備工場",tax:"課10",inc:"BIZ"},
-  {id:1088,dt:"2026-09-01",dr:501,cr:250,amt:53960,desc:"車検 重量税·自賠責保険·印紙代",vendor:"整備工場",tax:"不課税",inc:"BIZ"}
+  {id:1088,dt:"2026-09-01",dr:501,cr:250,amt:53960,desc:"車検 重量税·自賠責保険·印紙代",vendor:"整備工場",tax:"不課税",inc:"BIZ"},
+  {id:1089,dt:"2026-09-01",dr:516,cr:250,amt:107000,desc:"自宅 更新料(在宅事務所)",vendor:"賃貸人",tax:"非課税",inc:"BIZ"},
+  {id:1090,dt:"2026-09-02",dr:518,cr:250,amt:3000,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1091,dt:"2026-09-03",dr:507,cr:250,amt:3475,desc:"ベトナム顧客 手土産",vendor:"物販店",tax:"課10",inc:"BIZ"},
+  {id:1092,dt:"2026-09-03",dr:504,cr:250,amt:5280,desc:"ベトナム出張 空港移動 高速道路料金",vendor:"高速道路",tax:"課10",inc:"BIZ"},
+  {id:1093,dt:"2026-09-05",dr:504,cr:250,amt:28435,desc:"ベトナム出張 ビザ取得 往復航空券(ハノイ-バンコク)",vendor:"航空会社",tax:"免税*",inc:"BIZ"},
+  {id:1094,dt:"2026-09-05",dr:504,cr:250,amt:10336,desc:"ベトナム出張 ビザ取得 滞在ホテル",vendor:"ホテル",tax:"不課税",inc:"BIZ"},
+  {id:1095,dt:"2026-09-08",dr:504,cr:250,amt:107590,desc:"ワイソル ベトナム出張 往復航空券(日程変更·後日使用)",vendor:"航空会社",tax:"免税*",inc:"BIZ"},
+  {id:1096,dt:"2026-09-09",dr:507,cr:250,amt:33000,desc:"ベトナム メーカー·顧客 接待(550万VND)",vendor:"レストラン",tax:"不課税",inc:"BIZ"},
+  {id:1097,dt:"2026-09-11",dr:504,cr:250,amt:49440,desc:"ベトナム出張 宿泊",vendor:"ホテル",tax:"不課税",inc:"BIZ"},
+  {id:1098,dt:"2026-09-11",dr:504,cr:250,amt:13500,desc:"ベトナム出張 空港駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1099,dt:"2026-09-11",dr:504,cr:250,amt:5638,desc:"ベトナム出張 空港移動 ガソリン代",vendor:"ガソリンスタンド",tax:"課10",inc:"BIZ"},
+  {id:1100,dt:"2026-09-11",dr:504,cr:250,amt:4793,desc:"長崎出張 宿泊",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1101,dt:"2026-09-13",dr:504,cr:250,amt:4996,desc:"長崎出張 宿泊",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1102,dt:"2026-09-13",dr:507,cr:250,amt:30750,desc:"長崎出張 接待",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1103,dt:"2026-09-14",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"課10",inc:"BIZ"},
+  {id:1104,dt:"2026-09-16",dr:504,cr:250,amt:5230,desc:"外勤 駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1105,dt:"2026-09-16",dr:504,cr:250,amt:2670,desc:"外勤 高速道路料金",vendor:"高速道路",tax:"課10",inc:"BIZ"},
+  {id:1106,dt:"2026-09-17",dr:504,cr:250,amt:1040,desc:"外勤 駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1107,dt:"2026-09-17",dr:505,cr:250,amt:2860,desc:"ChatGPT 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1108,dt:"2026-09-18",dr:518,cr:250,amt:8580,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1109,dt:"2026-09-18",dr:507,cr:250,amt:13440,desc:"業務用ゴルフコンペ参加費",vendor:"ゴルフ場",tax:"課10",inc:"BIZ"},
+  {id:1110,dt:"2026-09-20",dr:505,cr:250,amt:2900,desc:"Gemini 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1111,dt:"2026-09-24",dr:504,cr:250,amt:12622,desc:"石垣島出張 宿泊(9/24~26)",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1112,dt:"2026-09-24",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"課10",inc:"BIZ"},
+  {id:1113,dt:"2026-09-24",dr:503,cr:250,amt:7440,desc:"電気料金(自宅·9月分)",vendor:"電力会社",tax:"課10",inc:"BIZ"},
+  {id:1114,dt:"2026-09-24",dr:504,cr:250,amt:10880,desc:"石垣島出張 交通費",vendor:"交通機関",tax:"課10",inc:"BIZ"},
+  {id:1115,dt:"2026-09-24",dr:504,cr:250,amt:10400,desc:"石垣島出張 レンタカー",vendor:"レンタカー会社",tax:"課10",inc:"BIZ"},
+  {id:1116,dt:"2026-09-26",dr:518,cr:250,amt:3476,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1117,dt:"2026-09-28",dr:503,cr:250,amt:2020,desc:"ガス料金(自宅·9月分)",vendor:"ガス会社",tax:"課10",inc:"BIZ"},
+  {id:1118,dt:"2026-09-29",dr:518,cr:250,amt:3003,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1119,dt:"2026-09-30",dr:111,cr:401,amt:850000,desc:"業務委託料(9月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
+  {id:1120,dt:"2026-09-25",dr:505,cr:250,amt:17622,desc:"Claude 月額($110·カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
