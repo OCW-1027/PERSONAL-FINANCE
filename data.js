@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20261001;   // yyyymmdd
+const DATA_VER = 20261002;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -403,7 +403,8 @@ const INIT_JOURNALS = [
   {id:1117,dt:"2026-09-28",dr:503,cr:250,amt:2020,desc:"ガス料金(自宅·9月分)",vendor:"ガス会社",tax:"課10",inc:"BIZ"},
   {id:1118,dt:"2026-09-29",dr:518,cr:250,amt:3003,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
   {id:1119,dt:"2026-09-30",dr:111,cr:401,amt:850000,desc:"業務委託料(9月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
-  {id:1120,dt:"2026-09-25",dr:505,cr:250,amt:17622,desc:"Claude 月額($110·カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
+  {id:1120,dt:"2026-09-25",dr:505,cr:250,amt:17622,desc:"Claude 月額($110·カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
+  {id:1121,dt:"2026-09-30",dr:505,cr:250,amt:18889,desc:"Claude 追加購読(カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];
