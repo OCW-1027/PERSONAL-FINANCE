@@ -381,12 +381,12 @@ function importCSV() {
     if (r.length < 3) return;
     const dt = r[0], an = r[1], desc = r[2] || '', ven = r[3] || '', tx = r[4] || '課10';
     const amt = +String(r[5] || r[4] || '').replace(/[^0-9.-]/g, '');
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dt) || !amt) { err.push(`${i + 1}行: 日付/金額`); return; }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dt) || !amt) { err.push(T('errRowDate', { i: i + 1 })); return; }
     const code = ACCT_ALIAS[an];
-    if (!code) { err.push(`${i + 1}行: 未知の科目「${an}」`); return; }
+    if (!code) { err.push(T('errRowAcct', { i: i + 1, a: an })); return; }
     const key = dt + '|' + amt + '|' + desc;
     if (seen.has(key)) { skip++; return; }
-    D.journals.push({ id: nid(), dt, dr: code, cr: 250, amt, desc, vendor: ven || '(要確認)', tax: tx, inc: acct(code).inc || 'BIZ' });
+    D.journals.push({ id: nid(), dt, dr: code, cr: 250, amt, desc, vendor: ven || T('needCheck'), tax: tx, inc: acct(code).inc || 'BIZ' });
     seen.add(key); ok++;
   });
   saveD();
@@ -665,8 +665,7 @@ function rTax() {
     <p class="mut">${T('sepNote')}</p>
   </div>
   <div class="card"><h3>${T('openSim')}</h3>
-    <p>未償却残高 <b>${yen(openingExpTotal() - Object.values(SET.openingExpense.amortized || {}).reduce((s, v) => s + v, 0) + openingExpAmort())}</b> —
-    決算書タブで償却額を変更すると税額が即時再計算されます。</p></div>`;
+    <p>${T('openSimNote', { n: '<b>' + yen(openingExpTotal() - Object.values(SET.openingExpense.amortized || {}).reduce((s, v) => s + v, 0) + openingExpAmort()) + '</b>' })}</p></div>`;
 }
 function saveSep() {
   SET.separateIncome = { stock: +$('#s_stk').value || 0, cfd: +$('#s_cfd').value || 0 };
@@ -693,7 +692,7 @@ function rSet() {
   </div></div>
   <div class="card"><h3>${T('setDed')}</h3><div class="form">
     <label>${T('socialIns')}<input type="number" id="c_soc" value="${ds.socialInsurance || 0}"></label>
-    <label>${T('spouseDed')}<select id="c_sp"><option value="1"${ds.spouse ? ' selected' : ''}>${T('yes')}</option><option value="0"${!ds.spouse ? ' selected' : ''}>なし</option></select></label>
+    <label>${T('spouseDed')}<select id="c_sp"><option value="1"${ds.spouse ? ' selected' : ''}>${T('yes')}</option><option value="0"${!ds.spouse ? ' selected' : ''}>${T('no')}</option></select></label>
     <label>${T('disabledDed')}<select id="c_dis">
       <option value="none"${ds.disabledType === 'none' ? ' selected' : ''}>${T('disNone')}</option>
       <option value="normal"${ds.disabledType === 'normal' ? ' selected' : ''}>${T('disNormal')}</option>
@@ -842,6 +841,8 @@ function applyNavLabels() {
   if (lg) lg.innerHTML = '<b>' + T('appTitle') + '</b><small>' + T('appSub') + '</small>'
     + '<em>' + T('appSub2') + '</em>';
   document.title = T('appTitle') + ' — ' + T('appSub2');
+  const lb = document.getElementById('langBtn');
+  if (lb) { lb.innerHTML = '🌐 <span>' + T('langBtn') + '</span><i>' + T('langBtnShort') + '</i>'; lb.title = T('setLang'); }
 }
 
 // ---------- データ保護 UI ----------

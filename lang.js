@@ -74,6 +74,8 @@ const LANG = {
     resetAll: "전체 삭제", saved: "저장했습니다", restored: "복원했습니다",
     badFile: "파일이 올바르지 않습니다", confirmReset: "전체 데이터를 삭제합니다. 계속하시겠습니까?",
     setLang: "언어 / 言語",
+    langBtn: "日本語", langBtnShort: "JA",
+    errRowDate: "{i}행: 일자/금액 확인", errRowAcct: "{i}행: 알 수 없는 계정과목「{a}」", needCheck: "(확인필요)",
     backupNever: "⚠ 아직 백업하지 않았습니다",
     backupOld: "⚠ 마지막 백업으로부터 {n}일 경과 — 백업을 권장합니다",
     backupLast: "마지막 백업: {n}일 전",
@@ -214,6 +216,8 @@ const LANG = {
     resetAll: "全削除", saved: "保存しました", restored: "復元しました",
     badFile: "ファイルが不正です", confirmReset: "全データを削除します。よろしいですか？",
     setLang: "言語 / 언어",
+    langBtn: "한국어", langBtnShort: "KO",
+    errRowDate: "{i}行: 日付/金額を確認", errRowAcct: "{i}行: 未知の科目「{a}」", needCheck: "(要確認)",
     backupNever: "⚠ まだバックアップしていません",
     backupOld: "⚠ 最終バックアップから {n}日経過 — バックアップを推奨します",
     backupLast: "最終バックアップ: {n}日前",
@@ -337,6 +341,7 @@ function setLang(v) {
   if (typeof applyNavLabels === 'function') applyNavLabels();
   if (typeof go === 'function') go((location.hash || '#dash').slice(1));
 }
+function toggleLang() { setLang(L === 'ko' ? 'ja' : 'ko'); }
 function initLang() {
   L = localStorage.getItem('pf_lang') || 'ko';
   document.documentElement.lang = (L === 'ko' ? 'ko' : 'ja');

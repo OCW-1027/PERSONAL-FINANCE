@@ -188,3 +188,11 @@ textarea{font-family:monospace;font-size:12px}
 .tb.mtx tr:hover td.nw{background:#f8fafc}
 .tb.mtx .tot td.nw,.tb.mtx .tot td{background:#eef4fb}
 .tb.mtx td.z{color:#e2e8f0}
+
+/* 言語切替ボタン */
+.langbtn{display:flex;align-items:center;gap:6px;margin:0 12px 10px;padding:6px 10px;background:#2a4a72;color:#fff;
+  border:1px solid #4a6d99;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.langbtn:hover{background:#3b6396}
+.langbtn i{display:none;font-style:normal}
+@media(max-width:820px){.langbtn{margin:0 4px 8px;padding:6px 0;justify-content:center;gap:2px;font-size:11px;border-radius:8px}
+  .langbtn span{display:none}.langbtn i{display:inline}}
