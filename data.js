@@ -6,7 +6,7 @@
 // ---------- データ版数 (更新のたびに +1) ----------
 // このバージョンが localStorage の保存値より新しいと、
 // アプリ起動時に「新しいデータがあります」と案内します。
-const DATA_VER = 20261002;   // yyyymmdd
+const DATA_VER = 20261031;   // yyyymmdd
 
 // ---------- 勘定科目マスタ (日本 個人事業 標準) ----------
 // k: 区分 A=資産 L=負債 C=資本 R=収益 E=費用
@@ -404,7 +404,44 @@ const INIT_JOURNALS = [
   {id:1118,dt:"2026-09-29",dr:518,cr:250,amt:3003,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
   {id:1119,dt:"2026-09-30",dr:111,cr:401,amt:850000,desc:"業務委託料(9月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
   {id:1120,dt:"2026-09-25",dr:505,cr:250,amt:17622,desc:"Claude 月額($110·カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
-  {id:1121,dt:"2026-09-30",dr:505,cr:250,amt:18889,desc:"Claude 追加購読(カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"}
+  {id:1121,dt:"2026-09-30",dr:505,cr:250,amt:18889,desc:"Claude 追加購読(カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
+  {id:1122,dt:"2026-10-01",dr:504,cr:250,amt:2100,desc:"外勤 駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1123,dt:"2026-10-01",dr:504,cr:250,amt:5520,desc:"外勤 ガソリン代",vendor:"ガソリンスタンド",tax:"課10",inc:"BIZ"},
+  {id:1124,dt:"2026-10-02",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"不課税",inc:"BIZ"},
+  {id:1125,dt:"2026-10-03",dr:504,cr:250,amt:8500,desc:"宮崎出張 レンタカー",vendor:"レンタカー会社",tax:"課10",inc:"BIZ"},
+  {id:1126,dt:"2026-10-03",dr:504,cr:250,amt:16014,desc:"宮崎出張 宿泊",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1127,dt:"2026-10-04",dr:518,cr:250,amt:20689,desc:"宮崎出張 夕食ミーティング",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1128,dt:"2026-10-04",dr:507,cr:250,amt:21130,desc:"宮崎出張 接待",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1129,dt:"2026-10-05",dr:504,cr:250,amt:6800,desc:"宮崎出張 空港駐車料",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1130,dt:"2026-10-05",dr:504,cr:250,amt:943,desc:"宮崎出張 レンタカー ガソリン代",vendor:"ガソリンスタンド",tax:"課10",inc:"BIZ"},
+  {id:1131,dt:"2026-10-05",dr:507,cr:250,amt:16204,desc:"宮崎出張 接待",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1132,dt:"2026-10-05",dr:518,cr:250,amt:1500,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1133,dt:"2026-10-08",dr:504,cr:250,amt:19130,desc:"ワイソル ベトナム出張 航空券 変更手数料(11月分)",vendor:"JAL(日本航空)",tax:"免税*",inc:"BIZ"},
+  {id:1134,dt:"2026-10-09",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"不課税",inc:"BIZ"},
+  {id:1135,dt:"2026-10-09",dr:504,cr:250,amt:65070,desc:"長崎出張 往復航空券",vendor:"JAL(日本航空)",tax:"課10",inc:"BIZ"},
+  {id:1136,dt:"2026-10-09",dr:504,cr:250,amt:8804,desc:"長崎出張 宿泊",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1137,dt:"2026-10-11",dr:504,cr:250,amt:56152,desc:"ワイソル ベトナム出張 宿泊(11月分)",vendor:"ホテル(Agoda)",tax:"不課税",inc:"BIZ"},
+  {id:1138,dt:"2026-10-12",dr:504,cr:250,amt:5055,desc:"長崎出張 宿泊",vendor:"ホテル",tax:"課10",inc:"BIZ"},
+  {id:1139,dt:"2026-10-12",dr:518,cr:250,amt:13290,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1140,dt:"2026-10-14",dr:518,cr:250,amt:4180,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1141,dt:"2026-10-17",dr:505,cr:250,amt:2860,desc:"ChatGPT 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1142,dt:"2026-10-18",dr:504,cr:250,amt:8120,desc:"月島HD ミーティング 高速道路料金(10/18~20)",vendor:"高速道路(ETC)",tax:"課10",inc:"BIZ"},
+  {id:1143,dt:"2026-10-18",dr:510,cr:250,amt:3300,desc:"備品購入",vendor:"物販店",tax:"課10",inc:"BIZ"},
+  {id:1144,dt:"2026-10-19",dr:507,cr:250,amt:67100,desc:"月島HD(TSK) ゴルフ接待",vendor:"ゴルフ場",tax:"課10",inc:"BIZ"},
+  {id:1145,dt:"2026-10-19",dr:507,cr:250,amt:82940,desc:"月島HD(TSK) 接待",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1146,dt:"2026-10-20",dr:505,cr:250,amt:2900,desc:"Gemini 月額(Google Play)",vendor:"Google",tax:"課10",inc:"BIZ"},
+  {id:1147,dt:"2026-10-20",dr:510,cr:250,amt:3098,desc:"備品購入",vendor:"物販店",tax:"課10",inc:"BIZ"},
+  {id:1148,dt:"2026-10-21",dr:504,cr:250,amt:4759,desc:"月島HD ミーティング レンタカー ガソリン代",vendor:"ガソリンスタンド",tax:"課10",inc:"BIZ"},
+  {id:1149,dt:"2026-10-21",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"不課税",inc:"BIZ"},
+  {id:1150,dt:"2026-10-23",dr:503,cr:250,amt:5956,desc:"電気料金(自宅·10月分)",vendor:"電力会社",tax:"課10",inc:"BIZ"},
+  {id:1151,dt:"2026-10-25",dr:505,cr:250,amt:34681,desc:"Claude 月額($220·157.64円換算)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
+  {id:1152,dt:"2026-10-27",dr:518,cr:250,amt:3500,desc:"業務ミーティング(飲食)",vendor:"レストラン",tax:"課10",inc:"BIZ"},
+  {id:1153,dt:"2026-10-30",dr:504,cr:250,amt:10000,desc:"交通ICカードチャージ",vendor:"JR東日本",tax:"不課税",inc:"BIZ"},
+  {id:1154,dt:"2026-10-30",dr:505,cr:250,amt:3538,desc:"Claude 追加購読(カード請求額)",vendor:"Anthropic",tax:"課10",inc:"BIZ"},
+  {id:1155,dt:"2026-10-03",dr:503,cr:250,amt:1995,desc:"上下水道料金(自宅·8~10月分)",vendor:"水道局",tax:"課10",inc:"BIZ"},
+  {id:1156,dt:"2026-10-20",dr:504,cr:250,amt:7400,desc:"月島HD ミーティング 駐車料(10/18~21)",vendor:"駐車場",tax:"課10",inc:"BIZ"},
+  {id:1157,dt:"2026-10-28",dr:503,cr:250,amt:2406,desc:"ガス料金(自宅·10月分)",vendor:"ガス会社",tax:"課10",inc:"BIZ"},
+  {id:1158,dt:"2026-10-30",dr:111,cr:401,amt:850000,desc:"業務委託料(10月分)",vendor:"チョンホICT",tax:"免税",inc:"BIZ"},
 ];
 const INIT_TEMPLATES = [];
 const INIT_ASSETS = [];

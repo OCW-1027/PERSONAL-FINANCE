@@ -204,8 +204,8 @@ function kokuhoPremium(income) {
 function calcTax() {
   const biz = calcPL('BIZ').income, re = calcPL('RE').income;
   const bd = blueDed();
-  const bizNet = Math.max(0, biz - bd);
-  const total = bizNet + re;                      // 総合課税 合計所得
+  const bizNet = biz > 0 ? Math.max(0, biz - bd) : biz;   // 青色控除は黒字の範囲内
+  const total = Math.max(0, bizNet + re);         // 総合課税 合計所得 (事業⇔不動産 損益通算)
   const ds = SET.deductionSet;
   const social = ds.socialInsurance || 0;
   const dedI = social + basicDed(total) + (ds.spouse ? TAX.deductions.spouse : 0) + disabledDed(false)
@@ -469,8 +469,8 @@ function rFSBody() {
 function fsPL() {
   const b = calcPL('BIZ'), r = calcPL('RE');
   const bd = blueDed();
-  const bizNet = Math.max(0, b.income - bd);
-  const total = bizNet + r.income;
+  const bizNet = b.income > 0 ? Math.max(0, b.income - bd) : b.income;
+  const total = Math.max(0, bizNet + r.income);
   const nm = SET.ownerName || '', fy = SET.fy;
   const row = (l, v, cls) => `<tr class="${cls || ''}"><td>${l}</td><td class="r">${yen(v)}</td></tr>`;
   const item = x => `<tr><td class="ind">${esc(acctDisp(x.c))}</td><td class="r">${yen(x.v)}</td></tr>`;
@@ -547,7 +547,7 @@ function fsBlue() {
     <tr><td>${T('expTotal')}</td><td class="r">${yen(b.expTotal)}</td></tr>
     <tr class="sub2"><td>${T('netIncome')}</td><td class="r">${yen(b.income)}</td></tr>
     <tr><td>${T('blueDed')}</td><td class="r">${yen(t.blueDed)}</td></tr>
-    <tr class="tot"><td>${T('incomeAmt')}</td><td class="r">${yen(Math.max(0, b.income - t.blueDed))}</td></tr>
+    <tr class="tot"><td>${T('incomeAmt')}</td><td class="r">${yen(b.income > 0 ? Math.max(0, b.income - t.blueDed) : b.income)}</td></tr>
   </table>
   <p class="mut">${T('filingType')}: ${{ white: T('typeWhite'), blue65: T('typeBlue65'), blue55: T('typeBlue55'), blue10: T('typeBlue10') }[SET.filingType]}</p></div>
   ${fsExpDetail()}`;
