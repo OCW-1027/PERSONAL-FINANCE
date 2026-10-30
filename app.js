@@ -17,7 +17,11 @@ function loadD() {
   D.realEstate = D.realEstate || INIT_REALESTATE.slice();
   D.customAccts = D.customAccts || [];
   D.seq = D.seq || 0;
-  SET = Object.assign({}, DEF_SET, SET);
+  const saved = SET;
+  SET = Object.assign({}, DEF_SET, saved);
+  // 入れ子の設定は項目単位でマージ (data.js に新しく追加した按分率などを反映)
+  SET.ratios = Object.assign({}, DEF_SET.ratios, saved.ratios || {});
+  SET.deductionSet = Object.assign({}, DEF_SET.deductionSet, saved.deductionSet || {});
   A = ACCT_INIT.concat(D.customAccts);
 }
 function saveD() {
